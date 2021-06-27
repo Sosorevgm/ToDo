@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Text">
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="Text.LargeTitle" parent="Text">
+        <item name="android:textSize">32sp</item>
+    </style>
+
+    <style name="Text.Title" parent="Text">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="Text.Button" parent="Text">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Text.Body" parent="Text">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="Text.Subhead" parent="Text">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+</resources>

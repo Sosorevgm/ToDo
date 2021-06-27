@@ -1,3 +1,32 @@
 <resources>
+    <!-- Common -->
     <string name="app_name">ToDo</string>
+    <string name="not">Нет</string>
+
+    <!-- Tasks -->
+    <string name="my_tasks">Мои дела</string>
+    <string name="tasks_done">Выполнено —</string>
+    <string name="new_task">Новая задача</string>
+
+    <!-- New task -->
+    <string name="save">СОХРАНИТЬ</string>
+    <string name="what_need_to_do">Что надо сделать…</string>
+    <string name="importance">Важность</string>
+    <string name="make_before">Сделать до</string>
+    <string name="delete">Удалить</string>
+    <string name="ready">Готово</string>
+    <string name="cancel">Отмена</string>
+
+    <!-- Notifications -->
+    <string name="notification_title">Важно</string>
+    <string name="notification_text_start">Сегодня вам нужно сделать</string>
+    <string name="notification_text_end">задач, не забудьте.</string>
+    <string name="notification_channel_name">Уведомления</string>
+    <string name="notification_channel_description">Канал уведомлений</string>
+
+    <string-array name="priority_array">
+        <item>Нет</item>
+        <item>Низкая</item>
+        <item>!! Высокая</item>
+    </string-array>
 </resources>
