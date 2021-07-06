@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/task_holder_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:background="@drawable/background_task_holder"
+    android:minHeight="48dp"
+    >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/btn_task_check"
+        android:layout_width="38dp"
+        android:layout_height="46dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_task_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_checkbox_gray"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_task_description"
+        style="@style/Text.Body"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:maxLines="3"
+        android:paddingBottom="12dp"
+        app:layout_constraintEnd_toStartOf="@+id/btn_task_info"
+        app:layout_constraintStart_toEndOf="@id/btn_task_check"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Купить что-то, где-то, зачем-то, но зачем не очень понятно. Купить что-то, где-то, зачем-то, но зачем не очень понятно. Купить что-то, где-то, зачем-то, но зачем не очень понятно. Купить что-то, где-то, зачем-то, но зачем не очень понятно. Купить что-то, где-то, зачем-то, но зачем не очень понятно"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_task_date"
+        style="@style/Text.Subhead"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:paddingBottom="12dp"
+        android:textColor="@color/gray"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@id/btn_task_check"
+        app:layout_constraintTop_toBottomOf="@id/tv_task_description"
+        tools:text="21 июля 2021"
+        />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/btn_task_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="20dp"
+        android:src="@drawable/icon_info"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

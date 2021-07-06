@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/tasks_screen"
+    >
+
+    <fragment
+        android:id="@+id/tasks_screen"
+        android:name="com.sosorevgm.todo.features.tasks.TasksFragment"
+        android:label="fragment_tasks"
+        tools:layout="@layout/fragment_tasks"
+        />
+
+    <fragment
+        android:id="@+id/new_task_screen"
+        android:name="com.sosorevgm.todo.features.new_task.NewTaskFragment"
+        android:label="fragment_new_task"
+        tools:layout="@layout/fragment_new_task"
+        />
+
+</navigation>
