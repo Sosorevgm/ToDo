@@ -2,6 +2,7 @@ package com.sosorevgm.todo.di.modules
 
 import android.app.Application
 import android.content.Context
+import com.sosorevgm.todo.di.scopes.AppScope
 import com.sosorevgm.todo.domain.cache.TasksDao
 import com.sosorevgm.todo.features.tasks.TasksRepository
 import com.sosorevgm.todo.features.tasks.TasksRepositoryImpl
@@ -13,17 +14,17 @@ import javax.inject.Singleton
 @Module
 class AppModule {
 
-    @Singleton
+    @AppScope
     @Provides
     fun providesContext(application: Application): Context = application.applicationContext
 
-    @Singleton
+    @AppScope
     @Provides
     fun providesTasksUseCaseImpl(
         repository: TasksRepository
     ): TasksUseCaseImpl = TasksUseCaseImpl(repository)
 
-    @Singleton
+    @AppScope
     @Provides
     fun providesTasksRepository(
         cache: TasksDao

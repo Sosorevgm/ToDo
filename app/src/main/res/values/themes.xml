@@ -1,19 +1,47 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- App theme -->
     <style name="Theme.ToDo" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">#F7F6F2</item>
         <item name="colorPrimaryDark">#F7F6F2</item>
         <item name="colorAccent">@color/blue</item>
         <item name="backgroundColor">#F7F6F2</item>
+        <item name="android:datePickerDialogTheme">@style/DatePicker.Theme</item>
         <item name="android:statusBarColor" tools:targetApi="l">#F7F6F2</item>
     </style>
 
-    <style name="DatePickerButtonsStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+    <!-- Toolbar text style -->
+    <style name="ExpandedToolbarTitle" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textSize">32sp</item>
+        <item name="android:textColor">@color/text_color</item>
+        <item name="android:textStyle">bold</item>
+        <item name="fontFamily">sans-serif</item>
+    </style>
+
+    <style name="CollapsedToolbarTitle" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/text_color</item>
+        <item name="android:textStyle">bold</item>
+        <item name="fontFamily">sans-serif</item>
+    </style>
+
+    <!-- DatePicker style -->
+    <style name="DatePicker.Style" parent="@android:style/Widget.Material.Light.DatePicker">
+        <item name="android:headerBackground">@color/blue</item>
+    </style>
+
+    <style name="DatePicker.Buttons.Style" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
         <item name="android:textColor">@color/blue</item>
     </style>
 
-    <style name="DatePickerStyle" parent="Theme.AppCompat.Light.Dialog">
+    <style name="DatePicker.Theme" parent="Theme.MaterialComponents.Dialog">
         <item name="colorAccent">@color/blue</item>
-        <item name="buttonBarStyle">@style/DatePickerButtonsStyle</item>
+        <item name="android:windowBackground">@color/back_secondary</item>
+        <item name="colorControlActivated">@color/blue</item>
+        <item name="android:datePickerStyle">@style/DatePicker.Style</item>
+        <item name="android:textColorPrimary">@color/text_color</item>
+        <item name="android:textColorSecondary">@color/gray</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/DatePicker.Buttons.Style</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/DatePicker.Buttons.Style</item>
     </style>
 </resources>

@@ -1,5 +1,6 @@
 package com.sosorevgm.todo.di.modules
 
+import com.sosorevgm.todo.di.scopes.AppScope
 import com.sosorevgm.todo.features.new_task.NewTaskFragment
 import com.sosorevgm.todo.features.tasks.TasksFragment
 import dagger.Module

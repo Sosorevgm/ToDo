@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sosorevgm.todo.domain.presentation.SingleLiveEvent
+import com.sosorevgm.todo.extensions.getCurrentTimestamp
 import com.sosorevgm.todo.extensions.getTimestamp
 import com.sosorevgm.todo.features.tasks.TasksUseCase
 import com.sosorevgm.todo.models.TaskModel
@@ -27,15 +28,32 @@ class NewTaskViewModel @Inject constructor(
 
     fun btnSaveClicked(description: String) {
         viewModelScope.launch {
-            val newTask = TaskModel(description, priority, false, date)
             if (oldTask == null) {
+                val newTask = TaskModel(
+                    0L,
+                    description,
+                    priority,
+                    false,
+                    date,
+                    getCurrentTimestamp(),
+                    0
+                )
                 tasksUseCase.addTask(newTask)
                 navigationBack.call()
             } else {
-                if (oldTask != newTask) {
-                    tasksUseCase.updateTask(oldTask!!, newTask)
-                    navigationBack.call()
+                oldTask?.let {
+                    val updatedTask = TaskModel(
+                        it.id,
+                        description,
+                        priority,
+                        it.done,
+                        date,
+                        it.createdAt,
+                        getCurrentTimestamp()
+                    )
+                    tasksUseCase.updateTask(updatedTask)
                 }
+                navigationBack.call()
             }
         }
     }
@@ -76,5 +94,4 @@ class NewTaskViewModel @Inject constructor(
             }
         }
     }
-
 }

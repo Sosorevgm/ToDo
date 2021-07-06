@@ -1,4 +1,4 @@
-package com.sosorevgm.todo.features.tasks
+package com.sosorevgm.todo.features.tasks.recycler
 
 import android.view.View
 import com.sosorevgm.todo.domain.presentation.AbstractHolder

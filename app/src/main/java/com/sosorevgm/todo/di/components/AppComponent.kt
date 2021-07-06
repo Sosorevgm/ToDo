@@ -1,15 +1,16 @@
-package com.sosorevgm.todo.di
+package com.sosorevgm.todo.di.components
 
 import android.app.Application
 import com.sosorevgm.todo.application.TodoApp
 import com.sosorevgm.todo.di.modules.*
+import com.sosorevgm.todo.di.scopes.AppScope
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
 import javax.inject.Singleton
 
-@Singleton
+@AppScope
 @Component(
     modules = [
         AndroidSupportInjectionModule::class,

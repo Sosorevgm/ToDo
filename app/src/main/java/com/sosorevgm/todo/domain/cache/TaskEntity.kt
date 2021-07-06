@@ -8,15 +8,21 @@ import com.sosorevgm.todo.models.TaskPriority
 
 @Entity(tableName = "tasks")
 data class TaskEntity(
-    @PrimaryKey
-    @ColumnInfo(name = "description")
-    val description: String,
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
+    val id: Long,
+    @ColumnInfo(name = "text")
+    val text: String,
     @ColumnInfo(name = "priority")
     val priority: TaskPriority,
-    @ColumnInfo(name = "is_done")
-    val isDone: Boolean,
-    @ColumnInfo(name = "date")
-    val date: Long
+    @ColumnInfo(name = "done")
+    val done: Boolean,
+    @ColumnInfo(name = "deadline")
+    val deadline: Long,
+    @ColumnInfo(name = "created_at")
+    val createdAt: Long,
+    @ColumnInfo(name = "updated_at")
+    val updatedAt: Long
 )
 
 fun List<TaskEntity>.toTaskModels(): List<TaskModel> {
@@ -24,10 +30,13 @@ fun List<TaskEntity>.toTaskModels(): List<TaskModel> {
     for (nextEntity in this) {
         result.add(
             TaskModel(
-                nextEntity.description,
+                nextEntity.id,
+                nextEntity.text,
                 nextEntity.priority,
-                nextEntity.isDone,
-                nextEntity.date
+                nextEntity.done,
+                nextEntity.deadline,
+                nextEntity.createdAt,
+                nextEntity.updatedAt
             )
         )
     }

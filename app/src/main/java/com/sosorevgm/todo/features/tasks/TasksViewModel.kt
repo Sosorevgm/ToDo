@@ -4,11 +4,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sosorevgm.todo.domain.account.AccountManager
+import com.sosorevgm.todo.features.tasks.recycler.TaskViewData
 import com.sosorevgm.todo.models.TaskComparator
 import com.sosorevgm.todo.models.TaskModel
 import com.sosorevgm.todo.models.switchIsDone
 import com.sosorevgm.todo.models.toViewData
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -45,23 +47,23 @@ class TasksViewModel @Inject constructor(
 
     fun onTaskCheckboxClicked(task: TaskModel) {
         viewModelScope.launch {
-            if (task.isDone) {
+            if (task.done) {
                 removeTaskFromCache(task)
             } else {
                 putTaskInCacheList(task)
             }
-            tasksUseCase.updateIsDoneTask(task.switchIsDone())
+            tasksUseCase.updateTask(task.switchIsDone())
         }
     }
 
     fun taskDoneSwipe(task: TaskModel) {
         viewModelScope.launch {
-            if (task.isDone) {
+            if (task.done) {
                 removeTaskFromCache(task)
             } else {
                 putTaskInCacheList(task)
             }
-            tasksUseCase.updateIsDoneTask(task.switchIsDone())
+            tasksUseCase.updateTask(task.switchIsDone())
         }
     }
 
@@ -86,12 +88,12 @@ class TasksViewModel @Inject constructor(
         if (accountManager.tasksVisibility) {
             items.addAll(tasksList.sortedWith(TaskComparator()).toViewData())
         } else {
-            val filteredTasks = tasksList.filter { !it.isDone } as MutableList<TaskModel>
+            val filteredTasks = tasksList.filter { !it.done } as MutableList<TaskModel>
             if (cachedTasks.isNotEmpty()) filteredTasks.addAll(cachedTasks)
             items.addAll(filteredTasks.sortedWith(TaskComparator()).toViewData())
         }
         items.add(TaskViewData.NewTask)
-        completedTasks.value = tasksList.filter { it.isDone }.size
+        completedTasks.value = tasksList.filter { it.done }.size
         allTasks.value = items
     }
 }

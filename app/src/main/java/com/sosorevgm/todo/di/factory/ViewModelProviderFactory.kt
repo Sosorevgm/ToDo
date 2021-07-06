@@ -2,11 +2,12 @@ package com.sosorevgm.todo.di.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.sosorevgm.todo.di.scopes.AppScope
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
 
-@Singleton
+@AppScope
 class ViewModelProviderFactory
 @Inject constructor(
     private val creators: Map<Class<out ViewModel>, @JvmSuppressWildcards Provider<ViewModel>>

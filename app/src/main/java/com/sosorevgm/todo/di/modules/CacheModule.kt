@@ -2,11 +2,11 @@ package com.sosorevgm.todo.di.modules
 
 import android.content.Context
 import androidx.room.Room
+import com.sosorevgm.todo.di.scopes.AppScope
 import com.sosorevgm.todo.domain.cache.TasksDao
 import com.sosorevgm.todo.domain.cache.TasksDatabase
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
 
 @Module
 class CacheModule {
@@ -15,7 +15,7 @@ class CacheModule {
         private const val DATABASE_NAME = "todo.cache.database"
     }
 
-    @Singleton
+    @AppScope
     @Provides
     fun providesTasksDao(context: Context): TasksDao = Room.databaseBuilder(
         context,

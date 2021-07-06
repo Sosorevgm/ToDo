@@ -126,6 +126,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:background="@null"
+                    android:minWidth="164dp"
                     />
 
             </LinearLayout>

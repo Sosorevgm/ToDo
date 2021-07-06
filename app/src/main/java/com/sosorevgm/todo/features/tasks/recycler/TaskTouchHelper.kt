@@ -1,4 +1,4 @@
-package com.sosorevgm.todo.features.tasks
+package com.sosorevgm.todo.features.tasks.recycler
 
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -8,7 +8,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.sosorevgm.todo.R
-
 
 class TaskTouchHelper(
     private val listener: IListener
@@ -64,7 +63,7 @@ class TaskTouchHelper(
                 c.drawRect(
                     itemView.left.toFloat(),
                     itemView.top.toFloat(),
-                    dX,
+                    dX + 32f,
                     itemView.bottom.toFloat(),
                     p
                 )

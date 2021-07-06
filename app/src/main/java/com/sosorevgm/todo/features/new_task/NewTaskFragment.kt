@@ -23,8 +23,7 @@ import dagger.android.support.DaggerFragment
 import java.util.*
 import javax.inject.Inject
 
-
-class NewTaskFragment : DaggerFragment(), View.OnClickListener {
+class NewTaskFragment : DaggerFragment(), AdapterView.OnItemSelectedListener, View.OnClickListener {
 
     private var _binding: FragmentNewTaskBinding? = null
     private val binding get() = _binding!!
@@ -55,39 +54,22 @@ class NewTaskFragment : DaggerFragment(), View.OnClickListener {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.newTaskSpinner.adapter = adapter
         }
-        binding.newTaskSpinner.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    when (position) {
-                        0 -> viewModel.setPriority(TaskPriority.DEFAULT)
-                        1 -> viewModel.setPriority(TaskPriority.LOW)
-                        2 -> viewModel.setPriority(TaskPriority.HIGH)
-                    }
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                }
-            }
+        binding.newTaskSpinner.onItemSelectedListener = this
 
         val task: TaskModel? = arguments?.getParcelable(TASK_BUNDLE)
         if (task != null) {
             viewModel.setOldTask(task)
             // setting task description
-            binding.etTaskDescription.setText(task.description, TextView.BufferType.EDITABLE)
+            binding.etTaskDescription.setText(task.text, TextView.BufferType.EDITABLE)
             // setting task priority
             val selection = task.priority.getSpinnerSelection()
             binding.newTaskSpinner.setSelection(selection)
             viewModel.setPriority(task.priority)
             //setting task date
-            if (task.date != 0L) {
-                binding.tvNewTaskDate.text = getTaskDate(task.date)
+            if (task.deadline != 0L) {
+                binding.tvNewTaskDate.text = getTaskDate(task.deadline)
                 binding.taskTimingSwitch.isChecked = true
-                viewModel.setDate(task.date)
+                viewModel.setDate(task.deadline)
             }
             // setting delete button
             binding.ivDeleteTask.setImageDrawable(
@@ -110,32 +92,7 @@ class NewTaskFragment : DaggerFragment(), View.OnClickListener {
 
         viewModel.switchEvent.observe(viewLifecycleOwner) { needToSetDate ->
             if (needToSetDate) {
-                val cal: Calendar = Calendar.getInstance()
-                val mYear = cal.get(Calendar.YEAR)
-                val mMonth = cal.get(Calendar.MONTH)
-                val mDay = cal.get(Calendar.DAY_OF_MONTH)
-
-                val datePickerDialog = DatePickerDialog(
-                    requireContext(),
-                    R.style.DatePickerStyle,
-                    { _, y, m, d ->
-                        viewModel.setDate(y, m, d)
-                        binding.taskTimingSwitch.isChecked = true
-                    },
-                    mYear,
-                    mMonth,
-                    mDay
-                )
-                datePickerDialog.setOnCancelListener {
-                    binding.taskTimingSwitch.isChecked = false
-                }
-                datePickerDialog.show()
-                datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
-                    .setTextColor(ContextCompat.getColor(requireContext(), R.color.blue))
-                datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
-                    .setTextColor(ContextCompat.getColor(requireContext(), R.color.blue))
-                datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).text =
-                    requireContext().getString(R.string.ready)
+                showDatePickerDialog()
             } else {
                 binding.taskTimingSwitch.isChecked = false
             }
@@ -159,6 +116,42 @@ class NewTaskFragment : DaggerFragment(), View.OnClickListener {
         _binding = null
     }
 
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        when (position) {
+            0 -> {
+                (view as TextView?)?.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.gray
+                    )
+                )
+                viewModel.setPriority(TaskPriority.DEFAULT)
+            }
+            1 -> {
+                (view as TextView?)?.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.text_color
+                    )
+                )
+                viewModel.setPriority(TaskPriority.LOW)
+            }
+            2 -> {
+                (view as TextView?)?.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.red
+                    )
+                )
+                viewModel.setPriority(TaskPriority.HIGH)
+            }
+        }
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+
+    }
+
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.btn_back -> findNavController().navigateUp()
@@ -173,5 +166,31 @@ class NewTaskFragment : DaggerFragment(), View.OnClickListener {
                 viewModel.switchClicked()
             }
         }
+    }
+
+    private fun showDatePickerDialog() {
+        val cal: Calendar = Calendar.getInstance()
+        val mYear = cal.get(Calendar.YEAR)
+        val mMonth = cal.get(Calendar.MONTH)
+        val mDay = cal.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(
+            requireContext(),
+            { _, y, m, d ->
+                viewModel.setDate(y, m, d)
+                binding.taskTimingSwitch.isChecked = true
+            },
+            mYear,
+            mMonth,
+            mDay
+        )
+        datePickerDialog.setOnCancelListener {
+            binding.taskTimingSwitch.isChecked = false
+        }
+        datePickerDialog.show()
+        datePickerDialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).text =
+            requireContext().getString(R.string.cancel)
+        datePickerDialog.getButton(DatePickerDialog.BUTTON_POSITIVE).text =
+            requireContext().getString(R.string.ready)
     }
 }

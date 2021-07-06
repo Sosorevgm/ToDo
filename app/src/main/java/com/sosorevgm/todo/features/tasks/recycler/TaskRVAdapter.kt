@@ -1,4 +1,4 @@
-package com.sosorevgm.todo.features.tasks
+package com.sosorevgm.todo.features.tasks.recycler
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -60,7 +60,7 @@ class TaskRVAdapter(
 class TaskItemCallback : DiffUtil.ItemCallback<TaskViewData>() {
     override fun areItemsTheSame(oldItem: TaskViewData, newItem: TaskViewData): Boolean {
         if (oldItem is TaskViewData.Task && newItem is TaskViewData.Task) {
-            return oldItem.description == newItem.description
+            return oldItem.text == newItem.text
         }
         return true
     }

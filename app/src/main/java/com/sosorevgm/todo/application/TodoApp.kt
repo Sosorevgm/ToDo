@@ -2,7 +2,7 @@ package com.sosorevgm.todo.application
 
 import androidx.work.Configuration
 import androidx.work.DelegatingWorkerFactory
-import com.sosorevgm.todo.di.DaggerAppComponent
+import com.sosorevgm.todo.di.components.DaggerAppComponent
 import com.sosorevgm.todo.domain.background.TasksWorkerFactory
 import com.sosorevgm.todo.domain.notifications.PushManager
 import com.sosorevgm.todo.features.tasks.TasksUseCase

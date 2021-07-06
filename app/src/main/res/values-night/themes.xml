@@ -1,20 +1,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- App theme -->
     <style name="Theme.ToDo" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-
         <item name="colorPrimary">#E5E5E5</item>
         <item name="colorPrimaryDark">#E5E5E5</item>
         <item name="colorAccent">@color/blue</item>
-        <item name="backgroundColor">@color/black</item>
+        <item name="backgroundColor">@color/back_primary</item>
+        <item name="android:datePickerDialogTheme">@style/DatePicker.Theme</item>
         <item name="android:statusBarColor" tools:targetApi="l">@color/background</item>
-    </style>
-
-    <style name="DatePickerButtonsStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
-        <item name="android:textColor">@color/blue</item>
-    </style>
-
-    <style name="DatePickerStyle" parent="Theme.AppCompat.Light.Dialog">
-        <item name="colorAccent">@color/blue</item>
-        <item name="buttonBarStyle">@style/DatePickerButtonsStyle</item>
     </style>
 </resources>

@@ -10,11 +10,9 @@ import javax.inject.Inject
 
 interface TasksRepository {
     fun getTasksFromCache(): Flow<List<TaskModel>>
-    suspend fun getAllTasks(): List<TaskModel>
     suspend fun getTasksToDo(): List<TaskModel>
     suspend fun addTask(task: TaskModel)
-    suspend fun updateIsDoneTask(task: TaskModel)
-    suspend fun updateTask(oldTask: TaskModel, newTask: TaskModel)
+    suspend fun updateTask(task: TaskModel)
     suspend fun deleteTask(task: TaskModel)
 }
 
@@ -24,17 +22,12 @@ class TasksRepositoryImpl @Inject constructor(
     override fun getTasksFromCache(): Flow<List<TaskModel>> =
         cache.getTasksFlow().map { it.toTaskModels() }
 
-    override suspend fun getAllTasks(): List<TaskModel> = cache.getTasks().toTaskModels()
-
     override suspend fun getTasksToDo(): List<TaskModel> = cache.getTasksToDo().toTaskModels()
 
     override suspend fun addTask(task: TaskModel) = cache.insertTask(task.toTaskEntity())
 
-    override suspend fun updateIsDoneTask(task: TaskModel) =
-        cache.updateIsDoneTask(task.toTaskEntity())
-
-    override suspend fun updateTask(oldTask: TaskModel, newTask: TaskModel) =
-        cache.updateTask(oldTask.toTaskEntity(), newTask.toTaskEntity())
+    override suspend fun updateTask(task: TaskModel) =
+        cache.updateTask(task.toTaskEntity())
 
     override suspend fun deleteTask(task: TaskModel) = cache.deleteTask(task.toTaskEntity())
 }

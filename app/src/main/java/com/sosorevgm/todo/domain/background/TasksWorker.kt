@@ -25,7 +25,7 @@ class TasksWorker(
             var tasksCount = 0
             val tasks = tasksUseCase.getTasksToDo()
             for (nextTask in tasks) {
-                if (DateUtils.isToday(nextTask.date * 1000)) {
+                if (DateUtils.isToday(nextTask.deadline * 1000)) {
                     tasksCount++
                 }
             }

@@ -37,19 +37,22 @@ class PushManager @Inject constructor(
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+        val pendingIntent =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+            } else {
+                PendingIntent.getActivity(context, 0, intent, 0)
+            }
 
-        val notificationText = StringBuilder()
-        notificationText.append(context.getString(R.string.notification_text_start))
-        notificationText.append(" ")
-        notificationText.append(tasksCount)
-        notificationText.append(" ")
-        notificationText.append(context.getString(R.string.notification_text_end))
+        val tasksCountText =
+            context.resources.getQuantityString(R.plurals.tasks, tasksCount, tasksCount)
+        val notificationsText =
+            context.resources.getString(R.string.notification_task_to_do_text, tasksCountText)
 
         val builder = NotificationCompat.Builder(context, DEFAULT_CHANNEL_ID)
             .setSmallIcon(R.drawable.icon_notification)
-            .setContentTitle(context.getString(R.string.notification_title))
-            .setContentText(notificationText.toString())
+            .setContentTitle(context.getString(R.string.notification_tasks_to_do_title))
+            .setContentText(notificationsText)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)

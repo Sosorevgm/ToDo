@@ -11,6 +11,10 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sosorevgm.todo.R
 import com.sosorevgm.todo.databinding.FragmentTasksBinding
+import com.sosorevgm.todo.features.tasks.recycler.TaskRVAdapter
+import com.sosorevgm.todo.features.tasks.recycler.TaskTouchHelper
+import com.sosorevgm.todo.features.tasks.recycler.TaskViewData
+import com.sosorevgm.todo.features.tasks.recycler.toTaskModel
 import com.sosorevgm.todo.models.TASK_BUNDLE
 import com.sosorevgm.todo.models.TaskModel
 import dagger.android.support.DaggerFragment
@@ -45,25 +49,29 @@ class TasksFragment : DaggerFragment(), TaskRVAdapter.IListener, TaskTouchHelper
         taskTouchHelper = TaskTouchHelper(this)
         ItemTouchHelper(taskTouchHelper).attachToRecyclerView(binding.tasksRecyclerView)
         binding.btnAddNewTask.setOnClickListener(this)
-        binding.toolbar.btnTasksVisibility.setOnClickListener(this)
-        binding.toolbar.collapsingToolbar.setOnClickListener(this)
-
+        binding.btnTasksVisibility.setOnClickListener(this)
+        binding.tasksToolbar.setOnClickListener(this)
+        binding.tasksCollapsingToolbar.apply {
+            setExpandedTitleTextAppearance(R.style.ExpandedToolbarTitle)
+            setCollapsedTitleTextAppearance(R.style.CollapsedToolbarTitle)
+        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         viewModel.tasksVisibility.observe(viewLifecycleOwner) { isVisible ->
             if (isVisible) {
-                binding.toolbar.ivTasksVisibility.setImageDrawable(
+                binding.ivTasksVisibility.setImageDrawable(
                     ContextCompat.getDrawable(
                         requireContext(),
                         R.drawable.icon_visibility
                     )
                 )
             } else {
-                binding.toolbar.ivTasksVisibility.setImageDrawable(
+                binding.ivTasksVisibility.setImageDrawable(
                     ContextCompat.getDrawable(
                         requireContext(),
                         R.drawable.icon_visibility_off
@@ -73,7 +81,7 @@ class TasksFragment : DaggerFragment(), TaskRVAdapter.IListener, TaskTouchHelper
         }
 
         viewModel.completedTasks.observe(viewLifecycleOwner) {
-            binding.toolbar.root.setTasks(it)
+            binding.tvToolbarTasksDone.text = requireContext().getString(R.string.tasks_done, it)
         }
 
         viewModel.allTasks.observe(viewLifecycleOwner) {
@@ -108,12 +116,13 @@ class TasksFragment : DaggerFragment(), TaskRVAdapter.IListener, TaskTouchHelper
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.collapsing_toolbar -> {
+            R.id.tasks_toolbar -> {
                 binding.tasksRecyclerView.layoutManager?.smoothScrollToPosition(
                     binding.tasksRecyclerView,
                     null,
                     0
                 )
+                binding.tasksAppbar.setExpanded(true)
             }
             R.id.btn_add_new_task -> findNavController().navigate(R.id.new_task_screen)
             R.id.btn_tasks_visibility -> viewModel.tasksVisibilityClicked()

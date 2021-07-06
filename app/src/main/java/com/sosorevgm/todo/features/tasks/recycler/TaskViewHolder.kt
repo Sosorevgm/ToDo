@@ -1,6 +1,5 @@
-package com.sosorevgm.todo.features.tasks
+package com.sosorevgm.todo.features.tasks.recycler
 
-import android.graphics.Color
 import android.graphics.Paint
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
@@ -22,7 +21,7 @@ class TaskViewHolder(
 
 
     override fun bind(item: TaskViewData.Task) {
-        if (item.isDone) {
+        if (item.done) {
             binding.ivTaskCheckbox.setImageDrawable(
                 ContextCompat.getDrawable(
                     itemView.context,
@@ -31,7 +30,7 @@ class TaskViewHolder(
             )
         } else {
             val currentTime = System.currentTimeMillis() / 1000
-            if (item.date != 0L && item.date - currentTime < 0) {
+            if (item.deadline != 0L && item.deadline - currentTime < 0) {
                 binding.ivTaskCheckbox.setImageDrawable(
                     ContextCompat.getDrawable(
                         itemView.context,
@@ -49,26 +48,40 @@ class TaskViewHolder(
         }
 
         if (item.priority == TaskPriority.DEFAULT) {
-            binding.tvTaskDescription.text = item.description
+            binding.tvTaskDescription.text = item.text
         } else {
             val strBuilder = SpannableStringBuilder()
             if (item.priority == TaskPriority.LOW) {
                 val arrowDown = SpannableString("↓")
-                arrowDown.setSpan(ForegroundColorSpan(Color.GRAY), 0, arrowDown.length, 0)
+                arrowDown.setSpan(
+                    ForegroundColorSpan(
+                        ContextCompat.getColor(
+                            itemView.context,
+                            R.color.gray
+                        )
+                    ), 0, arrowDown.length, 0
+                )
                 strBuilder.bold { append(arrowDown) }
                 strBuilder.append(" ")
-                strBuilder.append(item.description)
+                strBuilder.append(item.text)
             } else if (item.priority == TaskPriority.HIGH) {
                 val exclamation = SpannableString("!!")
-                exclamation.setSpan(ForegroundColorSpan(Color.RED), 0, exclamation.length, 0)
+                exclamation.setSpan(
+                    ForegroundColorSpan(
+                        ContextCompat.getColor(
+                            itemView.context,
+                            R.color.red
+                        )
+                    ), 0, exclamation.length, 0
+                )
                 strBuilder.bold { append(exclamation) }
                 strBuilder.append(" ")
-                strBuilder.append(item.description)
+                strBuilder.append(item.text)
             }
             binding.tvTaskDescription.setText(strBuilder, TextView.BufferType.SPANNABLE)
         }
 
-        if (item.isDone) {
+        if (item.done) {
             binding.tvTaskDescription.setTextColor(
                 ContextCompat.getColor(itemView.context, R.color.gray)
             )
@@ -83,9 +96,9 @@ class TaskViewHolder(
             binding.tvTaskDescription.paintFlags = 0
         }
 
-        if (item.date != 0L) {
+        if (item.deadline != 0L) {
             binding.tvTaskDate.visibility = View.VISIBLE
-            binding.tvTaskDate.text = getTaskDate(item.date)
+            binding.tvTaskDate.text = getTaskDate(item.deadline)
         } else {
             binding.tvTaskDate.visibility = View.GONE
         }
