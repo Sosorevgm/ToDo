@@ -18,7 +18,6 @@ import com.sosorevgm.todo.extensions.getTaskDate
 import com.sosorevgm.todo.models.TASK_BUNDLE
 import com.sosorevgm.todo.models.TaskModel
 import com.sosorevgm.todo.models.TaskPriority
-import com.sosorevgm.todo.models.getSpinnerSelection
 import dagger.android.support.DaggerFragment
 import java.util.*
 import javax.inject.Inject

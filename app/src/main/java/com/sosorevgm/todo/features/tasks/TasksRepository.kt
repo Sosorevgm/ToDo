@@ -1,9 +1,10 @@
 package com.sosorevgm.todo.features.tasks
 
 import com.sosorevgm.todo.domain.cache.TasksDao
+import com.sosorevgm.todo.domain.cache.TasksToSynchronizeDao
 import com.sosorevgm.todo.domain.cache.toTaskModels
 import com.sosorevgm.todo.models.TaskModel
-import com.sosorevgm.todo.models.toTaskEntity
+import com.sosorevgm.todo.models.TaskSynchronizeAction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -17,17 +18,26 @@ interface TasksRepository {
 }
 
 class TasksRepositoryImpl @Inject constructor(
-    private val cache: TasksDao
+    private val tasksDao: TasksDao,
+    private val tasksToSynchronizeDao: TasksToSynchronizeDao
 ) : TasksRepository {
     override fun getTasksFromCache(): Flow<List<TaskModel>> =
-        cache.getTasksFlow().map { it.toTaskModels() }
+        tasksDao.getTasksFlow().map { it.toTaskModels() }
 
-    override suspend fun getTasksToDo(): List<TaskModel> = cache.getTasksToDo().toTaskModels()
+    override suspend fun getTasksToDo(): List<TaskModel> = tasksDao.getTasksToDo().toTaskModels()
 
-    override suspend fun addTask(task: TaskModel) = cache.insertTask(task.toTaskEntity())
+    override suspend fun addTask(task: TaskModel) {
+        tasksDao.insertTask(task.toTaskEntity())
+        tasksToSynchronizeDao.insertTask(task.toTaskSynchronizeEntity(TaskSynchronizeAction.ADD))
+    }
 
-    override suspend fun updateTask(task: TaskModel) =
-        cache.updateTask(task.toTaskEntity())
+    override suspend fun updateTask(task: TaskModel) {
+        tasksDao.updateTask(task.toTaskEntity())
+        tasksToSynchronizeDao.insertTask(task.toTaskSynchronizeEntity(TaskSynchronizeAction.UPDATE))
+    }
 
-    override suspend fun deleteTask(task: TaskModel) = cache.deleteTask(task.toTaskEntity())
+    override suspend fun deleteTask(task: TaskModel) {
+        tasksDao.deleteTask(task.toTaskEntity())
+        tasksToSynchronizeDao.insertTask(task.toTaskSynchronizeEntity(TaskSynchronizeAction.DELETE))
+    }
 }

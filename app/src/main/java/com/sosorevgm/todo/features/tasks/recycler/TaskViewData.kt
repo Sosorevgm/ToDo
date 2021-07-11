@@ -6,7 +6,7 @@ import com.sosorevgm.todo.models.TaskPriority
 sealed class TaskViewData {
     object Header : TaskViewData()
     data class Task(
-        val id: Long,
+        val id: String,
         val text: String,
         val priority: TaskPriority,
         val done: Boolean,

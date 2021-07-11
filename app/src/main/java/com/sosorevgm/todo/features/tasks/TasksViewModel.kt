@@ -7,10 +7,8 @@ import com.sosorevgm.todo.domain.account.AccountManager
 import com.sosorevgm.todo.features.tasks.recycler.TaskViewData
 import com.sosorevgm.todo.models.TaskComparator
 import com.sosorevgm.todo.models.TaskModel
-import com.sosorevgm.todo.models.switchIsDone
 import com.sosorevgm.todo.models.toViewData
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

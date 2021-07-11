@@ -10,6 +10,7 @@ import com.sosorevgm.todo.features.tasks.TasksUseCase
 import com.sosorevgm.todo.models.TaskModel
 import com.sosorevgm.todo.models.TaskPriority
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 class NewTaskViewModel @Inject constructor(
@@ -30,7 +31,7 @@ class NewTaskViewModel @Inject constructor(
         viewModelScope.launch {
             if (oldTask == null) {
                 val newTask = TaskModel(
-                    0L,
+                    UUID.randomUUID().toString(),
                     description,
                     priority,
                     false,
@@ -39,7 +40,6 @@ class NewTaskViewModel @Inject constructor(
                     0
                 )
                 tasksUseCase.addTask(newTask)
-                navigationBack.call()
             } else {
                 oldTask?.let {
                     val updatedTask = TaskModel(
@@ -53,8 +53,8 @@ class NewTaskViewModel @Inject constructor(
                     )
                     tasksUseCase.updateTask(updatedTask)
                 }
-                navigationBack.call()
             }
+            navigationBack.call()
         }
     }
 
