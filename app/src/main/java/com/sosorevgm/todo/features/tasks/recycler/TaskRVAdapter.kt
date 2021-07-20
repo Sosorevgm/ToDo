@@ -5,9 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.sosorevgm.todo.R
+import com.sosorevgm.todo.databinding.HolderNewTaskBinding
 import com.sosorevgm.todo.databinding.HolderTaskBinding
 import com.sosorevgm.todo.domain.presentation.AbstractHolder
-import com.sosorevgm.todo.models.TaskModel
 
 class TaskRVAdapter(
     private val listener: IListener
@@ -19,10 +19,7 @@ class TaskRVAdapter(
         private const val VIEW_TYPE_NEW_TASK = 2
     }
 
-    interface IListener {
-        fun onTaskCheckboxClicked(task: TaskModel)
-        fun onTaskClicked(task: TaskModel)
-    }
+    interface IListener : TaskViewHolder.IListener, NewTaskViewHolder.IListener
 
     override fun getItemViewType(position: Int) = when (getItem(position)) {
         is TaskViewData.Header -> VIEW_TYPE_HEADER
@@ -46,7 +43,11 @@ class TaskRVAdapter(
         )
         VIEW_TYPE_NEW_TASK -> {
             NewTaskViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.holder_new_task, parent, false)
+                HolderNewTaskBinding.bind(
+                    LayoutInflater.from(parent.context)
+                        .inflate(R.layout.holder_new_task, parent, false)
+                ),
+                listener
             )
         }
         else -> throw IllegalArgumentException("Unknown item type")
@@ -60,7 +61,7 @@ class TaskRVAdapter(
 class TaskItemCallback : DiffUtil.ItemCallback<TaskViewData>() {
     override fun areItemsTheSame(oldItem: TaskViewData, newItem: TaskViewData): Boolean {
         if (oldItem is TaskViewData.Task && newItem is TaskViewData.Task) {
-            return oldItem.text == newItem.text
+            return oldItem.id == newItem.id
         }
         return true
     }

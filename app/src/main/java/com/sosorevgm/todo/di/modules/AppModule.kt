@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.sosorevgm.todo.di.scopes.AppScope
 import com.sosorevgm.todo.domain.api.TasksApi
+import com.sosorevgm.todo.domain.background.WorkerManagerImpl
 import com.sosorevgm.todo.domain.cache.TasksDao
 import com.sosorevgm.todo.domain.cache.TasksToSynchronizeDao
 import com.sosorevgm.todo.features.main.SynchronizeTasksRepository
@@ -21,6 +22,12 @@ class AppModule {
     @AppScope
     @Provides
     fun providesContext(application: Application): Context = application.applicationContext
+
+    @AppScope
+    @Provides
+    fun providesWorkerManagerImpl(
+        context: Context
+    ): WorkerManagerImpl = WorkerManagerImpl(context)
 
     @AppScope
     @Provides

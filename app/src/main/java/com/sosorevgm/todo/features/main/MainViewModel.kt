@@ -35,10 +35,8 @@ class MainViewModel @Inject constructor(
             synchronizeTasksUseCase.getTasksToSynchronize().collect { tasksToSynchronize ->
                 if (synchronizeJob == null || synchronizeJob!!.isCompleted) {
                     if (tasksToSynchronize.size == 1) {
-                        Timber.i("sending tasks")
                         synchronizeJob = launch { sendSingleTask(tasksToSynchronize[0]) }
                     } else if (tasksToSynchronize.size > 1) {
-                        Timber.i("sending tasks")
                         synchronizeJob = launch { sendTasks(tasksToSynchronize) }
                     }
                 }
@@ -48,7 +46,6 @@ class MainViewModel @Inject constructor(
 
     fun checkTasksUpdate() {
         if (tasksUpdateJob == null || tasksUpdateJob!!.isCompleted) {
-            Timber.i("checking new tasks")
             tasksUpdateJob = viewModelScope.launch { synchronizeTasksUseCase.checkTasksUpdate() }
         }
     }

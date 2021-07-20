@@ -19,7 +19,7 @@ class TasksWorkerFactory(
         workerClassName: String,
         workerParameters: WorkerParameters
     ): ListenableWorker? = when (workerClassName) {
-        TasksWorker::class.java.name -> TasksWorker(
+        TasksNotificationsWorker::class.java.name -> TasksNotificationsWorker(
             appContext,
             workerParameters,
             tasksUseCase,

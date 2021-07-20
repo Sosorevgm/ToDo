@@ -1,11 +1,13 @@
 package com.sosorevgm.todo.features.new_task
 
 import android.app.DatePickerDialog
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
@@ -40,10 +42,11 @@ class NewTaskFragment : DaggerFragment(), AdapterView.OnItemSelectedListener, Vi
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentNewTaskBinding.inflate(inflater, container, false)
-        binding.btnBack.setOnClickListener(this)
+        binding.appbar.btnBack.setOnClickListener(this)
         binding.btnChoseNewTaskPriority.setOnClickListener(this)
-        binding.btnSaveNewTask.setOnClickListener(this)
+        binding.appbar.btnSaveNewTask.setOnClickListener(this)
         binding.taskTimingSwitch.setOnClickListener(this)
+        binding.newTaskSpinner.onItemSelectedListener = this
 
         ArrayAdapter.createFromResource(
             requireContext(),
@@ -53,41 +56,18 @@ class NewTaskFragment : DaggerFragment(), AdapterView.OnItemSelectedListener, Vi
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             binding.newTaskSpinner.adapter = adapter
         }
-        binding.newTaskSpinner.onItemSelectedListener = this
 
         val task: TaskModel? = arguments?.getParcelable(TASK_BUNDLE)
         if (task != null) {
-            viewModel.setOldTask(task)
-            // setting task description
-            binding.etTaskDescription.setText(task.text, TextView.BufferType.EDITABLE)
-            // setting task priority
-            val selection = task.priority.getSpinnerSelection()
-            binding.newTaskSpinner.setSelection(selection)
-            viewModel.setPriority(task.priority)
-            //setting task date
-            if (task.deadline != 0L) {
-                binding.tvNewTaskDate.text = getTaskDate(task.deadline)
-                binding.taskTimingSwitch.isChecked = true
-                viewModel.setDate(task.deadline)
-            }
-            // setting delete button
-            binding.ivDeleteTask.setImageDrawable(
-                ContextCompat.getDrawable(
-                    requireContext(),
-                    R.drawable.icon_delete_red
-                )
-            )
-            binding.tvNewTaskDelete.setTextColor(Color.RED)
-            binding.btnDeleteTask.setOnClickListener {
-                viewModel.deleteOldTask()
-            }
+            setOldTask(task)
         }
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (viewModel.oldTask == null) setDescriptionFocus()
 
         viewModel.switchEvent.observe(viewLifecycleOwner) { needToSetDate ->
             if (needToSetDate) {
@@ -165,6 +145,36 @@ class NewTaskFragment : DaggerFragment(), AdapterView.OnItemSelectedListener, Vi
                 viewModel.switchClicked()
             }
         }
+    }
+
+    private fun setOldTask(task: TaskModel) {
+        viewModel.oldTask = task
+        binding.etTaskDescription.setText(task.text, TextView.BufferType.EDITABLE)
+        val selection = task.priority.getSpinnerSelection()
+        binding.newTaskSpinner.setSelection(selection)
+        viewModel.setPriority(task.priority)
+        if (task.deadline != 0L) {
+            binding.tvNewTaskDate.text = getTaskDate(task.deadline)
+            binding.taskTimingSwitch.isChecked = true
+            viewModel.setDate(task.deadline)
+        }
+        binding.ivDeleteTask.setImageDrawable(
+            ContextCompat.getDrawable(
+                requireContext(),
+                R.drawable.icon_delete_red
+            )
+        )
+        binding.tvNewTaskDelete.setTextColor(Color.RED)
+        binding.btnDeleteTask.setOnClickListener {
+            viewModel.deleteOldTask()
+        }
+    }
+
+    private fun setDescriptionFocus() {
+        binding.etTaskDescription.requestFocus()
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(binding.etTaskDescription, InputMethodManager.SHOW_IMPLICIT)
     }
 
     private fun showDatePickerDialog() {

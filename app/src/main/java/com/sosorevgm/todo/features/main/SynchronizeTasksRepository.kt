@@ -8,7 +8,6 @@ import com.sosorevgm.todo.domain.cache.TasksDao
 import com.sosorevgm.todo.domain.cache.TasksToSynchronizeDao
 import com.sosorevgm.todo.domain.network.fold
 import com.sosorevgm.todo.models.TaskApiModel
-import com.sosorevgm.todo.models.TaskSynchronizeAction
 import com.sosorevgm.todo.models.toTaskEntities
 import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
@@ -49,27 +48,28 @@ class SynchronizeTasksRepositoryImpl @Inject constructor(
 
             for (serverTask in tasksFromServer) {
                 val databaseTask = tasksFromDatabase.firstOrNull { it.id == serverTask.id }
-                // check the synchronization table before adding the task to the main table
-                if (databaseTask == null && tasksToSynchronizeToDelete.firstOrNull { it.id == serverTask.id } == null) {
-                    tasksToAdd.add(serverTask)
+                val synchronizedTaskToDelete =
+                    tasksToSynchronizeToDelete.firstOrNull { it.id == serverTask.id }
+                if (databaseTask == null) {
+                    // if the main table and sync table do not contain the server task,
+                    // add it to the main table
+                    if (synchronizedTaskToDelete == null) {
+                        tasksToAdd.add(serverTask)
+                    }
+                } else {
                     // if the update time of the database task happened earlier
                     // than the server update task in local database
-                } else if (serverTask != databaseTask && serverTask.updatedAt > databaseTask!!.updatedAt) {
-                    tasksToUpdate.add(serverTask)
-                    // if the update time of the server task happened earlier
-                    // than the database task send this task to the server
-                } else if (serverTask != databaseTask && serverTask.updatedAt < databaseTask.updatedAt) {
-                    tasksToSynchronizeDao.insertTask(
-                        databaseTask.toTaskSynchronizeEntity(
-                            TaskSynchronizeAction.UPDATE
-                        )
-                    )
+                    if (serverTask != databaseTask && serverTask.updatedAt > databaseTask.updatedAt) {
+                        tasksToUpdate.add(serverTask)
+                    }
                 }
             }
 
             for (databaseTask in tasksFromDatabase) {
-                // check the synchronization table before deleting the task from the main table
-                if (tasksFromServer.firstOrNull { it.id == databaseTask.id } == null && tasksToSynchronizeToAdd.firstOrNull { it.id == databaseTask.id } == null) {
+                // check the sync table before deleting the task from the main table
+                val serverTask = tasksFromServer.firstOrNull { it.id == databaseTask.id }
+                val taskToAdd = tasksToSynchronizeToAdd.firstOrNull { it.id == databaseTask.id }
+                if (serverTask == null && taskToAdd == null) {
                     tasksToDelete.add(databaseTask)
                 }
             }

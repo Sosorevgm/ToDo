@@ -6,6 +6,7 @@
         <item name="colorPrimaryDark">#F7F6F2</item>
         <item name="colorAccent">@color/blue</item>
         <item name="backgroundColor">#F7F6F2</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <item name="android:datePickerDialogTheme">@style/DatePicker.Theme</item>
         <item name="android:statusBarColor" tools:targetApi="l">#F7F6F2</item>
     </style>

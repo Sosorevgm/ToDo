@@ -4,6 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sosorevgm.todo.domain.account.AccountManager
+import com.sosorevgm.todo.domain.navigation.Navigation
+import com.sosorevgm.todo.domain.presentation.SingleLiveEvent
 import com.sosorevgm.todo.features.tasks.recycler.TaskViewData
 import com.sosorevgm.todo.models.TaskComparator
 import com.sosorevgm.todo.models.TaskModel
@@ -17,12 +19,12 @@ class TasksViewModel @Inject constructor(
     private val tasksUseCase: TasksUseCase
 ) : ViewModel() {
 
-    val allTasks = MutableLiveData<List<TaskViewData>>()
+    val tasks = MutableLiveData<List<TaskViewData>>()
     val completedTasks = MutableLiveData<Int>()
     val tasksVisibility = MutableLiveData<Boolean>()
+    val navigation = SingleLiveEvent<Navigation.Event>()
 
     private val tasksList = mutableListOf<TaskModel>()
-    private val cachedTasks = mutableListOf<TaskModel>()
 
     init {
         tasksVisibility.value = accountManager.tasksVisibility
@@ -35,32 +37,21 @@ class TasksViewModel @Inject constructor(
         }
     }
 
-    fun tasksVisibilityClicked() {
-        cachedTasks.clear()
+    fun tasksVisibilityClick() {
         val currentVisibility = accountManager.tasksVisibility
         accountManager.tasksVisibility = !currentVisibility
         tasksVisibility.value = !currentVisibility
         updateUi()
     }
 
-    fun onTaskCheckboxClicked(task: TaskModel) {
+    fun onTaskCheckboxClick(task: TaskModel) {
         viewModelScope.launch {
-            if (task.done) {
-                removeTaskFromCache(task)
-            } else {
-                putTaskInCacheList(task)
-            }
             tasksUseCase.updateTask(task.switchIsDone())
         }
     }
 
     fun taskDoneSwipe(task: TaskModel) {
         viewModelScope.launch {
-            if (task.done) {
-                removeTaskFromCache(task)
-            } else {
-                putTaskInCacheList(task)
-            }
             tasksUseCase.updateTask(task.switchIsDone())
         }
     }
@@ -71,13 +62,12 @@ class TasksViewModel @Inject constructor(
         }
     }
 
-    private fun removeTaskFromCache(task: TaskModel) {
-        cachedTasks.remove(task)
+    fun onTaskClick(task: TaskModel) {
+        navigation.value = Navigation.getEvent(Navigation.Screen.NEW_TASK, task)
     }
 
-    private fun putTaskInCacheList(task: TaskModel) {
-        if (cachedTasks.contains(task.switchIsDone())) return
-        cachedTasks.add(task.switchIsDone())
+    fun onNewTaskClick() {
+        navigation.value = Navigation.getEvent(Navigation.Screen.NEW_TASK, null)
     }
 
     private fun updateUi() {
@@ -87,11 +77,10 @@ class TasksViewModel @Inject constructor(
             items.addAll(tasksList.sortedWith(TaskComparator()).toViewData())
         } else {
             val filteredTasks = tasksList.filter { !it.done } as MutableList<TaskModel>
-            if (cachedTasks.isNotEmpty()) filteredTasks.addAll(cachedTasks)
             items.addAll(filteredTasks.sortedWith(TaskComparator()).toViewData())
         }
         items.add(TaskViewData.NewTask)
         completedTasks.value = tasksList.filter { it.done }.size
-        allTasks.value = items
+        tasks.value = items
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.sosorevgm.todo.features.main.SynchronizeTasksUseCase
+import timber.log.Timber
 
 class TasksSynchronizationWorker(
     appContext: Context,

@@ -23,43 +23,19 @@ class NewTaskViewModel @Inject constructor(
     val switchEvent = SingleLiveEvent<Boolean>()
     val navigationBack = SingleLiveEvent<Void>()
 
-    private var oldTask: TaskModel? = null
+    var oldTask: TaskModel? = null
     private var priority = TaskPriority.DEFAULT
     private var date = 0L
 
     fun btnSaveClicked(description: String) {
         viewModelScope.launch {
             if (oldTask == null) {
-                val newTask = TaskModel(
-                    UUID.randomUUID().toString(),
-                    description,
-                    priority,
-                    false,
-                    date,
-                    getCurrentTimestamp(),
-                    0
-                )
-                tasksUseCase.addTask(newTask)
+                tasksUseCase.addTask(getNewTask(description))
             } else {
-                oldTask?.let {
-                    val updatedTask = TaskModel(
-                        it.id,
-                        description,
-                        priority,
-                        it.done,
-                        date,
-                        it.createdAt,
-                        getCurrentTimestamp()
-                    )
-                    tasksUseCase.updateTask(updatedTask)
-                }
+                tasksUseCase.updateTask(getUpdatedTask(description))
             }
             navigationBack.call()
         }
-    }
-
-    fun setOldTask(task: TaskModel) {
-        oldTask = task
     }
 
     fun setPriority(taskPriority: TaskPriority) {
@@ -90,8 +66,28 @@ class NewTaskViewModel @Inject constructor(
         viewModelScope.launch {
             oldTask?.let {
                 tasksUseCase.deleteTask(it)
-                navigationBack.call()
             }
+            navigationBack.call()
         }
     }
+
+    private fun getNewTask(description: String): TaskModel = TaskModel(
+        UUID.randomUUID().toString(),
+        description,
+        priority,
+        false,
+        date,
+        getCurrentTimestamp(),
+        0
+    )
+
+    private fun getUpdatedTask(description: String): TaskModel = TaskModel(
+        oldTask!!.id,
+        description,
+        priority,
+        oldTask!!.done,
+        date,
+        oldTask!!.createdAt,
+        getCurrentTimestamp()
+    )
 }

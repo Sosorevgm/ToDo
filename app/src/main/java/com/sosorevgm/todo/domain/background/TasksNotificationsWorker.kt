@@ -8,7 +8,7 @@ import com.sosorevgm.todo.domain.notifications.PushManager
 import com.sosorevgm.todo.features.tasks.TasksUseCase
 import java.util.*
 
-class TasksWorker(
+class TasksNotificationsWorker(
     appContext: Context,
     workerParameters: WorkerParameters,
     private val tasksUseCase: TasksUseCase,
