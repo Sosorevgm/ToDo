@@ -32,7 +32,7 @@ class TasksFragment : DaggerFragment(), TaskRVAdapter.IListener, TaskTouchHelper
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private val viewModel by lazy {
+    private val viewModel by lazy(mode = LazyThreadSafetyMode.NONE) {
         ViewModelProvider(requireActivity(), viewModelFactory)
             .get(TasksViewModel::class.java)
     }

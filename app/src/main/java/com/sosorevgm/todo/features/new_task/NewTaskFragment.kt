@@ -32,7 +32,7 @@ class NewTaskFragment : DaggerFragment(), AdapterView.OnItemSelectedListener, Vi
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
-    private val viewModel by lazy {
+    private val viewModel by lazy(mode = LazyThreadSafetyMode.NONE) {
         ViewModelProvider(this, viewModelFactory)
             .get(NewTaskViewModel::class.java)
     }

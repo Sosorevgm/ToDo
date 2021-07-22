@@ -1,11 +1,11 @@
 package com.sosorevgm.todo.di.modules
 
 import com.sosorevgm.todo.BuildConfig
+import com.sosorevgm.todo.di.qualifiers.AuthInterceptor
 import com.sosorevgm.todo.di.qualifiers.LoggingInterceptor
-import com.sosorevgm.todo.di.qualifiers.TasksInterceptor
 import com.sosorevgm.todo.di.scopes.AppScope
 import com.sosorevgm.todo.domain.account.AccountManager
-import com.sosorevgm.todo.domain.api.MainInterceptor
+import com.sosorevgm.todo.domain.api.AuthorizationInterceptor
 import com.sosorevgm.todo.domain.api.TasksApi
 import com.sosorevgm.todo.domain.network.NetworkResultAdapterFactory
 import dagger.Module
@@ -37,16 +37,16 @@ class RetrofitModule {
     }
 
     @AppScope
-    @TasksInterceptor
+    @AuthInterceptor
     @Provides
-    fun providesTasksInterceptor(accountManager: AccountManager): Interceptor =
-        MainInterceptor(accountManager)
+    fun providesAuthorizationInterceptor(accountManager: AccountManager): Interceptor =
+        AuthorizationInterceptor(accountManager)
 
     @AppScope
     @Provides
     fun providesClient(
         @LoggingInterceptor loggingInterceptor: Interceptor,
-        @TasksInterceptor tasksInterceptor: Interceptor
+        @AuthInterceptor tasksInterceptor: Interceptor
     ): OkHttpClient =
         OkHttpClient.Builder()
             .readTimeout(TIMEOUT_REST_SEC.toLong(), TimeUnit.SECONDS)
