@@ -18,6 +18,13 @@ android {
         versionName = Release.version_name
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // default authorization token field
+        buildConfigField(
+            "String",
+            "DEFAULT_AUTHORIZATION_TOKEN",
+            "\"7b65508b61304a87ae125b3d2dbd7497\""
+        )
     }
 
     buildTypes {

@@ -2,7 +2,6 @@ package com.sosorevgm.todo.features.main
 
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
-import androidx.work.*
 import com.sosorevgm.todo.R
 import com.sosorevgm.todo.domain.background.WorkerManager
 import dagger.android.support.DaggerAppCompatActivity
@@ -16,7 +15,7 @@ class MainActivity : DaggerAppCompatActivity() {
     @Inject
     lateinit var workerManager: WorkerManager
 
-    private val viewModel by lazy {
+    private val viewModel by lazy(mode = LazyThreadSafetyMode.NONE) {
         ViewModelProvider(this, viewModelFactory)
             .get(MainViewModel::class.java)
     }

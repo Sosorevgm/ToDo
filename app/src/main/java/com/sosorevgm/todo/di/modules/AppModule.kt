@@ -39,7 +39,7 @@ class AppModule {
     @Provides
     fun providesTasksRepository(
         tasksDao: TasksDao,
-        tasksToSynchronizeDao: TasksToSynchronizeDao,
+        tasksToSynchronizeDao: TasksToSynchronizeDao
     ): TasksRepositoryImpl = TasksRepositoryImpl(tasksDao, tasksToSynchronizeDao)
 
     @AppScope

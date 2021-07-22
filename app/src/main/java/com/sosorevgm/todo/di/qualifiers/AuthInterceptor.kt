@@ -3,4 +3,4 @@ package com.sosorevgm.todo.di.qualifiers
 import javax.inject.Qualifier
 
 @Qualifier
-annotation class TasksInterceptor
+annotation class AuthInterceptor

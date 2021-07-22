@@ -1,6 +1,7 @@
 package com.sosorevgm.todo.domain.account
 
 import android.content.SharedPreferences
+import com.sosorevgm.todo.BuildConfig
 
 class AccountManager(
     private val preferences: SharedPreferences
@@ -9,7 +10,6 @@ class AccountManager(
     companion object {
         private const val TASKS_VISIBILITY = "tasks.visibility"
         private const val AUTHORIZATION_TOKEN = "authorization.token"
-        private const val DEFAULT_AUTHORIZATION_TOKEN = "7b65508b61304a87ae125b3d2dbd7497"
     }
 
     var tasksVisibility: Boolean
@@ -28,7 +28,7 @@ class AccountManager(
 
     private fun getAuthToken(): String {
         val token = preferences.getString(AUTHORIZATION_TOKEN, null)
-        return token ?: DEFAULT_AUTHORIZATION_TOKEN
+        return token ?: BuildConfig.DEFAULT_AUTHORIZATION_TOKEN
     }
 
     private fun setAuthToken(token: String) {

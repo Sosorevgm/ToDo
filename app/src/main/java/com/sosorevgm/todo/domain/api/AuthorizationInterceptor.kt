@@ -5,7 +5,7 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
 
-class MainInterceptor @Inject constructor(
+class AuthorizationInterceptor @Inject constructor(
     private val accountManager: AccountManager
 ) : Interceptor {
 
