@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sosorevgm.todo.R
 import com.sosorevgm.todo.databinding.FragmentTasksBinding
+import com.sosorevgm.todo.domain.navigation.Navigation
 import com.sosorevgm.todo.features.tasks.recycler.TaskRVAdapter
 import com.sosorevgm.todo.features.tasks.recycler.TaskTouchHelper
 import com.sosorevgm.todo.features.tasks.recycler.TaskViewData
@@ -49,9 +50,9 @@ class TasksFragment : DaggerFragment(), TaskRVAdapter.IListener, TaskTouchHelper
         taskTouchHelper = TaskTouchHelper(this)
         ItemTouchHelper(taskTouchHelper).attachToRecyclerView(binding.tasksRecyclerView)
         binding.btnAddNewTask.setOnClickListener(this)
-        binding.btnTasksVisibility.setOnClickListener(this)
-        binding.tasksToolbar.setOnClickListener(this)
-        binding.tasksCollapsingToolbar.apply {
+        binding.appbar.tasksToolbar.setOnClickListener(this)
+        binding.appbar.btnTasksVisibility.setOnClickListener(this)
+        binding.appbar.tasksCollapsingToolbar.apply {
             setExpandedTitleTextAppearance(R.style.ExpandedToolbarTitle)
             setCollapsedTitleTextAppearance(R.style.CollapsedToolbarTitle)
         }
@@ -61,17 +62,16 @@ class TasksFragment : DaggerFragment(), TaskRVAdapter.IListener, TaskTouchHelper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         viewModel.tasksVisibility.observe(viewLifecycleOwner) { isVisible ->
             if (isVisible) {
-                binding.ivTasksVisibility.setImageDrawable(
+                binding.appbar.ivTasksVisibility.setImageDrawable(
                     ContextCompat.getDrawable(
                         requireContext(),
                         R.drawable.icon_visibility
                     )
                 )
             } else {
-                binding.ivTasksVisibility.setImageDrawable(
+                binding.appbar.ivTasksVisibility.setImageDrawable(
                     ContextCompat.getDrawable(
                         requireContext(),
                         R.drawable.icon_visibility_off
@@ -81,27 +81,35 @@ class TasksFragment : DaggerFragment(), TaskRVAdapter.IListener, TaskTouchHelper
         }
 
         viewModel.completedTasks.observe(viewLifecycleOwner) {
-            binding.tvToolbarTasksDone.text = requireContext().getString(R.string.tasks_done, it)
+            binding.appbar.tvToolbarTasksDone.text =
+                requireContext().getString(R.string.tasks_done, it)
         }
 
-        viewModel.allTasks.observe(viewLifecycleOwner) {
+        viewModel.tasks.observe(viewLifecycleOwner) {
             taskAdapter.submitList(it)
         }
+
+        viewModel.navigation.observe(viewLifecycleOwner) { event ->
+            when (event.screen) {
+                Navigation.Screen.NEW_TASK -> {
+                    val bundle = Bundle()
+                    if (event.task != null) bundle.putParcelable(TASK_BUNDLE, event.task)
+                    findNavController().navigate(R.id.new_task_screen, bundle)
+                }
+            }
+        }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
+    override fun onTaskCheckboxClick(task: TaskModel) {
+        viewModel.onTaskCheckboxClick(task)
     }
 
-    override fun onTaskCheckboxClicked(task: TaskModel) {
-        viewModel.onTaskCheckboxClicked(task)
+    override fun onTaskClick(task: TaskModel) {
+        viewModel.onTaskClick(task)
     }
 
-    override fun onTaskClicked(task: TaskModel) {
-        findNavController().navigate(
-            R.id.new_task_screen,
-            Bundle().apply { putParcelable(TASK_BUNDLE, task) })
+    override fun onNewTaskClick() {
+        viewModel.onNewTaskClick()
     }
 
     override fun taskDoneSwipe(position: Int) {
@@ -122,10 +130,15 @@ class TasksFragment : DaggerFragment(), TaskRVAdapter.IListener, TaskTouchHelper
                     null,
                     0
                 )
-                binding.tasksAppbar.setExpanded(true)
+                binding.appbar.root.setExpanded(true)
             }
-            R.id.btn_add_new_task -> findNavController().navigate(R.id.new_task_screen)
-            R.id.btn_tasks_visibility -> viewModel.tasksVisibilityClicked()
+            R.id.btn_add_new_task -> viewModel.onNewTaskClick()
+            R.id.btn_tasks_visibility -> viewModel.tasksVisibilityClick()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }

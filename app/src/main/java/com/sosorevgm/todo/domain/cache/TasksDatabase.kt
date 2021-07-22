@@ -5,11 +5,13 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [
-        TaskEntity::class
+        TaskEntity::class,
+        TaskSynchronizeEntity::class
     ],
     version = 1,
     exportSchema = false
 )
 abstract class TasksDatabase : RoomDatabase() {
     abstract val tasksDao: TasksDao
+    abstract val tasksToSynchronizeDao: TasksToSynchronizeDao
 }

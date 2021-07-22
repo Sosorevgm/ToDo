@@ -1,7 +1,11 @@
+
 package com.sosorevgm.todo.models
 
 import android.os.Parcelable
 import com.sosorevgm.todo.domain.cache.TaskEntity
+import com.sosorevgm.todo.domain.cache.TaskSynchronizeEntity
+import com.sosorevgm.todo.extensions.getCurrentTimestamp
+import com.sosorevgm.todo.extensions.isSameDay
 import com.sosorevgm.todo.features.tasks.recycler.TaskViewData
 import kotlinx.parcelize.Parcelize
 import java.util.*
@@ -10,48 +14,84 @@ const val TASK_BUNDLE = "task.bundle"
 
 @Parcelize
 data class TaskModel(
-    val id: Long = 0L,
+    val id: String,
     val text: String,
     val priority: TaskPriority,
     val done: Boolean,
     val deadline: Long,
     val createdAt: Long,
     val updatedAt: Long
-) : Parcelable
+) : Parcelable {
 
-enum class TaskPriority {
-    LOW, DEFAULT, HIGH
+    fun switchIsDone() =
+        TaskModel(
+            this.id,
+            this.text,
+            this.priority,
+            !this.done,
+            this.deadline,
+            this.createdAt,
+            getCurrentTimestamp()
+        )
+
+    fun toTaskEntity() =
+        TaskEntity(
+            this.id,
+            this.text,
+            this.priority,
+            this.done,
+            this.deadline,
+            this.createdAt,
+            this.updatedAt
+        )
+
+    fun toTaskSynchronizeEntity(action: TaskSynchronizeAction): TaskSynchronizeEntity =
+        TaskSynchronizeEntity(
+            action,
+            this.id,
+            this.text,
+            this.priority.toString(),
+            this.done,
+            this.deadline,
+            this.createdAt,
+            this.updatedAt
+        )
+
+    fun toTaskApiModel(): TaskApiModel = TaskApiModel(
+        this.id,
+        this.text,
+        this.priority.toString(),
+        this.done,
+        this.deadline,
+        this.createdAt,
+        this.updatedAt
+    )
+
+    fun toTaskApiModelWithId(id: Long): TaskApiModel = TaskApiModel(
+        id.toString(),
+        this.text,
+        this.priority.toString(),
+        this.done,
+        this.deadline,
+        this.createdAt,
+        this.updatedAt
+    )
 }
 
 class TaskComparator : Comparator<TaskModel> {
     override fun compare(taskOne: TaskModel, taskTwo: TaskModel): Int {
-        if (taskOne.deadline == 0L && taskTwo.deadline == 0L) {
-            return (taskOne.createdAt - taskTwo.createdAt).toInt()
-        } else if (taskOne.deadline == 0L) {
+        if (taskOne.deadline == 0L && taskTwo.deadline != 0L) {
             return 1
-        } else if (taskTwo.deadline == 0L) {
+        } else if (taskOne.deadline != 0L && taskTwo.deadline == 0L) {
             return -1
+        } else if (taskOne.deadline == 0L && taskTwo.deadline == 0L) {
+            return getImportanceToCompare(taskOne, taskTwo)
         }
 
-        val calendar = GregorianCalendar()
-        calendar.timeInMillis = taskOne.deadline * 1000
-        val taskOneYear = calendar.get(Calendar.YEAR)
-        val taskOneMonth = calendar.get(Calendar.MONTH)
-        val taskOneDay = calendar.get(Calendar.DAY_OF_MONTH)
-        calendar.timeInMillis = taskTwo.deadline * 1000
-        val taskTwoYear = calendar.get(Calendar.YEAR)
-        val taskTwoMonth = calendar.get(Calendar.MONTH)
-        val taskTwoDay = calendar.get(Calendar.DAY_OF_MONTH)
-        if (taskOneYear < taskTwoYear) return -1
-        if (taskOneYear > taskTwoYear) return 1
-        if (taskOneMonth < taskTwoMonth) return -1
-        if (taskOneMonth > taskTwoMonth) return 1
-        if (taskOneDay < taskTwoDay) return -1
-        if (taskOneDay > taskTwoDay) return 1
-        if (taskOne.priority < taskTwo.priority) return 1
-        if (taskOne.priority > taskTwo.priority) return -1
-
-        return (taskOne.createdAt - taskTwo.createdAt).toInt()
+        if (isSameDay(taskOne.deadline, taskTwo.deadline)) {
+            return getImportanceToCompare(taskOne, taskTwo)
+        }
+        return (taskOne.deadline - taskTwo.deadline).toInt()
     }
 }
 
@@ -73,30 +113,19 @@ fun List<TaskModel>.toViewData(): List<TaskViewData.Task> {
     return result
 }
 
-fun TaskModel.switchIsDone() =
-    TaskModel(
-        this.id,
-        this.text,
-        this.priority,
-        !this.done,
-        this.deadline,
-        this.createdAt,
-        this.updatedAt
-    )
+fun List<TaskModel>.toTaskApiModels(): List<TaskApiModel> {
+    val result = mutableListOf<TaskApiModel>()
+    for (nextTask in this) {
+        result.add(nextTask.toTaskApiModel())
+    }
+    return result
+}
 
-fun TaskModel.toTaskEntity() =
-    TaskEntity(
-        this.id,
-        this.text,
-        this.priority,
-        this.done,
-        this.deadline,
-        this.createdAt,
-        this.updatedAt
-    )
-
-fun TaskPriority.getSpinnerSelection(): Int = when (this) {
-    TaskPriority.LOW -> 1
-    TaskPriority.DEFAULT -> 0
-    TaskPriority.HIGH -> 2
+private fun getImportanceToCompare(taskOne: TaskModel, taskTwo: TaskModel): Int {
+    if (taskOne.priority == TaskPriority.HIGH && taskTwo.priority != TaskPriority.HIGH) {
+        return -1
+    } else if (taskOne.priority != TaskPriority.HIGH && taskTwo.priority == TaskPriority.HIGH) {
+        return 1
+    }
+    return 0
 }

@@ -5,12 +5,16 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.sosorevgm.todo.models.TaskModel
 import com.sosorevgm.todo.models.TaskPriority
+import com.sosorevgm.todo.models.TaskPriorityConstants.TASK_PRIORITY_DEFAULT
+import com.sosorevgm.todo.models.TaskPriorityConstants.TASK_PRIORITY_HIGH
+import com.sosorevgm.todo.models.TaskPriorityConstants.TASK_PRIORITY_LOW
+import com.sosorevgm.todo.models.TaskSynchronizeAction
 
 @Entity(tableName = "tasks")
 data class TaskEntity(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     @ColumnInfo(name = "id")
-    val id: Long,
+    val id: String,
     @ColumnInfo(name = "text")
     val text: String,
     @ColumnInfo(name = "priority")
@@ -23,7 +27,25 @@ data class TaskEntity(
     val createdAt: Long,
     @ColumnInfo(name = "updated_at")
     val updatedAt: Long
-)
+) {
+    fun toTaskSynchronizeEntity(action: TaskSynchronizeAction): TaskSynchronizeEntity {
+        val importance: String = when (this.priority) {
+            TaskPriority.LOW -> TASK_PRIORITY_LOW
+            TaskPriority.DEFAULT -> TASK_PRIORITY_DEFAULT
+            TaskPriority.HIGH -> TASK_PRIORITY_HIGH
+        }
+        return TaskSynchronizeEntity(
+            action,
+            this.id,
+            this.text,
+            importance,
+            this.done,
+            this.deadline,
+            this.createdAt,
+            this.updatedAt
+        )
+    }
+}
 
 fun List<TaskEntity>.toTaskModels(): List<TaskModel> {
     val result = mutableListOf<TaskModel>()

@@ -15,5 +15,4 @@
             <solid android:color="@color/task_background" />
         </shape>
     </item>
-
 </ripple>

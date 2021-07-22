@@ -12,13 +12,18 @@ import com.sosorevgm.todo.R
 import com.sosorevgm.todo.databinding.HolderTaskBinding
 import com.sosorevgm.todo.domain.presentation.AbstractHolder
 import com.sosorevgm.todo.extensions.getTaskDate
+import com.sosorevgm.todo.models.TaskModel
 import com.sosorevgm.todo.models.TaskPriority
 
 class TaskViewHolder(
     private val binding: HolderTaskBinding,
-    private val listener: TaskRVAdapter.IListener
+    private val listener: IListener
 ) : AbstractHolder<TaskViewData.Task>(binding.root) {
 
+    interface IListener {
+        fun onTaskCheckboxClick(task: TaskModel)
+        fun onTaskClick(task: TaskModel)
+    }
 
     override fun bind(item: TaskViewData.Task) {
         if (item.done) {
@@ -104,11 +109,11 @@ class TaskViewHolder(
         }
 
         binding.btnTaskCheck.setOnClickListener {
-            listener.onTaskCheckboxClicked(item.toTaskModel())
+            listener.onTaskCheckboxClick(item.toTaskModel())
         }
 
         binding.taskHolderLayout.setOnClickListener {
-            listener.onTaskClicked(item.toTaskModel())
+            listener.onTaskClick(item.toTaskModel())
         }
     }
 }

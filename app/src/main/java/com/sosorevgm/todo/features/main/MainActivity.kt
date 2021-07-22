@@ -1,31 +1,36 @@
 package com.sosorevgm.todo.features.main
 
 import android.os.Bundle
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequest
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
+import androidx.lifecycle.ViewModelProvider
+import androidx.work.*
 import com.sosorevgm.todo.R
-import com.sosorevgm.todo.domain.background.TasksWorker
+import com.sosorevgm.todo.domain.background.WorkerManager
 import dagger.android.support.DaggerAppCompatActivity
-import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 class MainActivity : DaggerAppCompatActivity() {
 
-    companion object {
-        private const val TASK_WORKER_TAG = "task.worker.tag"
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    @Inject
+    lateinit var workerManager: WorkerManager
+
+    private val viewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)
+            .get(MainViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val tasksWorkRequest: PeriodicWorkRequest =
-            PeriodicWorkRequestBuilder<TasksWorker>(1, TimeUnit.HOURS).build()
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            TASK_WORKER_TAG,
-            ExistingPeriodicWorkPolicy.KEEP,
-            tasksWorkRequest
-        )
+        viewModel.startSynchronizingTasks()
+        workerManager.startWorkers()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.checkTasksUpdate()
     }
 }
