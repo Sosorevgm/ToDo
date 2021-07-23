@@ -42,6 +42,12 @@ object Versions {
 
     const val junit_core = "4.13.2"
     const val junit_ext = "1.1.3"
+    const val arch_core = "2.1.0"
+
+    const val mockito_core = "3.9.0"
+    const val mockito_kotlin = "3.2.0"
+    const val mockito_kotlin_nhaarman = "2.1.0"
+    const val coroutines_test = "1.5.1"
     const val espresso_core = "3.4.0"
 }
 
@@ -137,5 +143,13 @@ object Timber {
 object Tests {
     const val junit_core = "junit:junit:${Versions.junit_core}"
     const val junit_ext = "androidx.test.ext:junit:${Versions.junit_ext}"
+    const val arch_core = "androidx.arch.core:core-testing:${Versions.arch_core}"
+
+    const val mockito_core = "org.mockito:mockito-core:${Versions.mockito_core}"
+    const val mockito_kotlin_nhaarman =
+        "com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.mockito_kotlin_nhaarman}"
+    const val mockito_kotlin = "org.mockito.kotlin:mockito-kotlin:${Versions.mockito_kotlin}"
+    const val coroutines_test =
+        "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines_test}"
     const val espresso_core = "androidx.test.espresso:espresso-core:${Versions.espresso_core}"
 }

@@ -2,21 +2,27 @@ package com.sosorevgm.todo.domain.account
 
 import android.content.SharedPreferences
 import com.sosorevgm.todo.BuildConfig
+import javax.inject.Inject
 
-class AccountManager(
+interface AccountManager {
+    var tasksVisibility: Boolean
+    var authorizationToken: String
+}
+
+class AccountManagerImpl @Inject constructor(
     private val preferences: SharedPreferences
-) {
+) : AccountManager {
 
     companion object {
         private const val TASKS_VISIBILITY = "tasks.visibility"
         private const val AUTHORIZATION_TOKEN = "authorization.token"
     }
 
-    var tasksVisibility: Boolean
+    override var tasksVisibility: Boolean
         get() = getTasksDoneVisibility()
         set(value) = setTasksDoneVisibility(value)
 
-    var authorizationToken: String
+    override var authorizationToken: String
         get() = getAuthToken()
         set(value) = setAuthToken(value)
 

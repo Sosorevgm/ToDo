@@ -4,7 +4,7 @@ import com.sosorevgm.todo.BuildConfig
 import com.sosorevgm.todo.di.qualifiers.AuthInterceptor
 import com.sosorevgm.todo.di.qualifiers.LoggingInterceptor
 import com.sosorevgm.todo.di.scopes.AppScope
-import com.sosorevgm.todo.domain.account.AccountManager
+import com.sosorevgm.todo.domain.account.AccountManagerImpl
 import com.sosorevgm.todo.domain.api.AuthorizationInterceptor
 import com.sosorevgm.todo.domain.api.TasksApi
 import com.sosorevgm.todo.domain.network.NetworkResultAdapterFactory
@@ -39,7 +39,7 @@ class RetrofitModule {
     @AppScope
     @AuthInterceptor
     @Provides
-    fun providesAuthorizationInterceptor(accountManager: AccountManager): Interceptor =
+    fun providesAuthorizationInterceptor(accountManager: AccountManagerImpl): Interceptor =
         AuthorizationInterceptor(accountManager)
 
     @AppScope
