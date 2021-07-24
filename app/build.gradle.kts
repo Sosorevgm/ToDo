@@ -99,5 +99,11 @@ dependencies {
     testImplementation(Tests.coroutines_test)
     androidTestImplementation(Tests.junit_ext)
     androidTestImplementation(Tests.espresso_core)
+    androidTestImplementation(Tests.mockito_android)
+    androidTestImplementation(Tests.androidx_test_core)
+    androidTestImplementation(Tests.androidx_test_runner)
+    androidTestImplementation(Tests.androidx_test_rules)
+    androidTestImplementation(Tests.androidx_fragment_testing)
+    androidTestImplementation(Tests.androidx_fragment_testing_ktx)
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 }

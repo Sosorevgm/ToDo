@@ -1,5 +1,6 @@
 package com.sosorevgm.todo.view_models
 
+import androidx.annotation.VisibleForTesting
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.sosorevgm.todo.features.new_task.NewTaskViewModel
 import com.sosorevgm.todo.features.tasks.TasksUseCase
@@ -16,6 +17,7 @@ import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import java.util.concurrent.TimeoutException
 
+@VisibleForTesting
 class NewTaskViewModelTest {
 
     companion object {
