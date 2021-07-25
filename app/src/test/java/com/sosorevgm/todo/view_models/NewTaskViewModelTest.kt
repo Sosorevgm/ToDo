@@ -52,26 +52,26 @@ class NewTaskViewModelTest {
 
     @Test
     fun `old task must be null after init`() {
-        assertEquals(viewModel.oldTask == null, true)
+        assertEquals(true, viewModel.oldTask == null)
     }
 
     @Test
     fun `old task should be updated after setting the task`() {
         viewModel.oldTask = oldTask
-        assertEquals(viewModel.oldTask != null, true)
+        assertEquals(true, viewModel.oldTask != null)
     }
 
     @Test
     fun `switch live data value should be equals true after switch click event`() {
         viewModel.switchClicked()
-        assertEquals(viewModel.switchEvent.getOrAwaitValue() == true, true)
+        assertEquals(true, viewModel.switchEvent.getOrAwaitValue())
     }
 
     @Test
     fun `switch live data value should be equals false after set date and switch click event`() {
         viewModel.setDate(11000000)
         viewModel.switchClicked()
-        assertEquals(viewModel.switchEvent.getOrAwaitValue() == false, true)
+        assertEquals(true, viewModel.switchEvent.getOrAwaitValue() == false)
     }
 
     @Test(expected = TimeoutException::class)
@@ -99,6 +99,6 @@ class NewTaskViewModelTest {
     @Test
     fun `date live data should be not null after set date`() {
         viewModel.setDate(2021, 7, 23)
-        assertEquals(viewModel.dateLiveData.getOrAwaitValue() != null, true)
+        assertEquals(true, viewModel.dateLiveData.getOrAwaitValue() != null)
     }
 }

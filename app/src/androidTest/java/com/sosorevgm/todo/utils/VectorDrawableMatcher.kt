@@ -5,11 +5,12 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
 import android.view.View
 import android.widget.ImageView
+import androidx.annotation.DrawableRes
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
 
-class VectorDrawableMatcher(private val expectedId: Int) :
+class VectorDrawableMatcher(@DrawableRes private val drawableRes: Int) :
     TypeSafeMatcher<View?>(View::class.java) {
     private var resourceName: String? = null
 
@@ -18,14 +19,14 @@ class VectorDrawableMatcher(private val expectedId: Int) :
             return false
         }
         val imageView: ImageView = item
-        if (expectedId < 0) {
+        if (drawableRes < 0) {
             return imageView.drawable == null
         }
         val resources: Resources = item.getContext().resources
         val expectedDrawable: Drawable = resources.getDrawable(
-            expectedId, null
+            drawableRes, null
         )
-        resourceName = resources.getResourceEntryName(expectedId)
+        resourceName = resources.getResourceEntryName(drawableRes)
         val draw: Drawable = imageView.drawable as VectorDrawable
         val drawTwo: Drawable = expectedDrawable as VectorDrawable
         return draw.constantState?.equals(drawTwo.constantState) ?: false
@@ -34,7 +35,7 @@ class VectorDrawableMatcher(private val expectedId: Int) :
     override fun describeTo(description: Description?) {
         description?.let {
             it.appendText("with drawable from resource id: ")
-            it.appendValue(expectedId)
+            it.appendValue(drawableRes)
             if (resourceName != null) {
                 it.appendText("[")
                 it.appendText(resourceName)
@@ -44,6 +45,6 @@ class VectorDrawableMatcher(private val expectedId: Int) :
     }
 }
 
-fun withVectorDrawable(resourceId: Int): Matcher<View?> {
-    return VectorDrawableMatcher(resourceId)
+fun withVectorDrawable(@DrawableRes drawableRes: Int): Matcher<View?> {
+    return VectorDrawableMatcher(drawableRes)
 }

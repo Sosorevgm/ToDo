@@ -83,23 +83,23 @@ class TaskViewModelTest {
 
     @Test
     fun `visibility live data value should be false after init`() {
-        assertEquals(viewModel.tasksVisibility.getOrAwaitValue(), false)
+        assertEquals(false, viewModel.tasksVisibility.getOrAwaitValue())
     }
 
     @Test
     fun `visibility live data value should be true after tasks visibility click`() {
         viewModel.tasksVisibilityClick()
-        assertEquals(viewModel.tasksVisibility.getOrAwaitValue(), true)
+        assertEquals(true, viewModel.tasksVisibility.getOrAwaitValue())
     }
 
     @Test
     fun `completed task live data value should be equals 0 after init`() {
-        assertEquals(viewModel.completedTasks.getOrAwaitValue(), 0)
+        assertEquals(0, viewModel.completedTasks.getOrAwaitValue())
     }
 
     @Test
     fun `tasks view data should contains header, task and end items after init`() {
-        assertEquals(viewModel.tasks.getOrAwaitValue().size == 3, true)
+        assertEquals(true, viewModel.tasks.getOrAwaitValue().size == 3)
     }
 
     @Test(expected = TimeoutException::class)
@@ -110,12 +110,12 @@ class TaskViewModelTest {
     @Test
     fun `navigation live data value should contain an event with a nullable task after a new task action happened`() {
         viewModel.onNewTaskClick()
-        assertEquals(viewModel.navigation.getOrAwaitValue().task == null, true)
+        assertEquals(true, viewModel.navigation.getOrAwaitValue().task == null)
     }
 
     @Test
     fun `navigation live data value should contain an event with non-nullable task after the task click action happened`() {
         viewModel.onTaskClick(existingTask)
-        assertEquals(viewModel.navigation.getOrAwaitValue().task != null, true)
+        assertEquals(true, viewModel.navigation.getOrAwaitValue().task != null)
     }
 }
