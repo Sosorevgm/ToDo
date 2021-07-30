@@ -4,9 +4,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.sosorevgm.todo.di.scopes.AppScope
 import com.sosorevgm.todo.domain.account.AccountManager
+import com.sosorevgm.todo.domain.account.AccountManagerImpl
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
 
 @Module
 class AccountModule {
@@ -23,5 +23,5 @@ class AccountModule {
     @AppScope
     @Provides
     fun providesAccountManager(preferences: SharedPreferences): AccountManager =
-        AccountManager(preferences)
+        AccountManagerImpl(preferences)
 }

@@ -34,6 +34,10 @@ android {
         }
     }
 
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -89,7 +93,17 @@ dependencies {
     implementation(Timber.core)
 
     testImplementation(Tests.junit_core)
+    testImplementation(Tests.arch_core)
+    testImplementation(Tests.mockito_core)
+    testImplementation(Tests.mockito_kotlin)
+    testImplementation(Tests.coroutines_test)
     androidTestImplementation(Tests.junit_ext)
     androidTestImplementation(Tests.espresso_core)
+    androidTestImplementation(Tests.mockito_android)
+    androidTestImplementation(Tests.androidx_test_core)
+    androidTestImplementation(Tests.androidx_test_runner)
+    androidTestImplementation(Tests.androidx_test_rules)
+    androidTestImplementation(Tests.androidx_fragment_testing)
+    androidTestImplementation(Tests.androidx_fragment_testing_ktx)
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 }

@@ -30,7 +30,6 @@ class SynchronizeTasksRepositoryImpl @Inject constructor(
     private val tasksDao: TasksDao,
     private val tasksToSynchronizeDao: TasksToSynchronizeDao,
     private val api: TasksApi
-
 ) : SynchronizeTasksRepository {
     override fun getTasksToSynchronize(): Flow<List<TaskSynchronizeEntity>> =
         tasksToSynchronizeDao.getTasksToSynchronize()

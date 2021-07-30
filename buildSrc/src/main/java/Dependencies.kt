@@ -42,7 +42,18 @@ object Versions {
 
     const val junit_core = "4.13.2"
     const val junit_ext = "1.1.3"
+    const val arch_core = "2.1.0"
+
+    const val mockito_core = "3.9.0"
+    const val mockito_kotlin = "3.2.0"
+    const val coroutines_test = "1.5.1"
     const val espresso_core = "3.4.0"
+    const val androidx_test_core = "1.4.0"
+    const val mockito_android = "2.28.2"
+    const val androidx_test_runner = "1.4.0"
+    const val androidx_test_rules = "1.4.0"
+    const val androidx_fragment_testing = "1.3.6"
+    const val androidx_fragment_testing_ktx = "1.2.4"
 }
 
 object Config {
@@ -137,5 +148,19 @@ object Timber {
 object Tests {
     const val junit_core = "junit:junit:${Versions.junit_core}"
     const val junit_ext = "androidx.test.ext:junit:${Versions.junit_ext}"
+    const val arch_core = "androidx.arch.core:core-testing:${Versions.arch_core}"
+
+    const val mockito_core = "org.mockito:mockito-core:${Versions.mockito_core}"
+    const val mockito_kotlin = "org.mockito.kotlin:mockito-kotlin:${Versions.mockito_kotlin}"
+    const val coroutines_test =
+        "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines_test}"
+    const val androidx_test_core = "androidx.test:core-ktx:${Versions.androidx_test_core}"
+    const val mockito_android = "org.mockito:mockito-android:${Versions.mockito_android}"
     const val espresso_core = "androidx.test.espresso:espresso-core:${Versions.espresso_core}"
+    const val androidx_test_runner = "androidx.test:runner:${Versions.androidx_test_runner}"
+    const val androidx_test_rules = "androidx.test:rules:${Versions.androidx_test_rules}"
+    const val androidx_fragment_testing =
+        "androidx.fragment:fragment-testing:${Versions.androidx_fragment_testing}"
+    const val androidx_fragment_testing_ktx =
+        "androidx.fragment:fragment-ktx:${Versions.androidx_fragment_testing_ktx}"
 }
