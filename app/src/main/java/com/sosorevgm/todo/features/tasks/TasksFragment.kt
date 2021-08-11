@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.sosorevgm.todo.R
 import com.sosorevgm.todo.databinding.FragmentTasksBinding
 import com.sosorevgm.todo.domain.navigation.Navigation
@@ -42,7 +43,9 @@ class TasksFragment : DaggerFragment(), TaskRVAdapter.IListener, TaskTouchHelper
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentTasksBinding.inflate(inflater, container, false)
-        taskAdapter = TaskRVAdapter(this)
+        taskAdapter = TaskRVAdapter(this).apply {
+            stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+        }
         binding.tasksRecyclerView.run {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = taskAdapter

@@ -9,6 +9,7 @@ object Versions {
     const val design_appcompat = "1.3.0"
     const val design_material = "1.4.0"
     const val design_constraint_layout = "2.0.4"
+    const val design_recycler_view = "1.2.1"
 
     const val navigation = "2.3.5"
 
@@ -79,6 +80,7 @@ object Design {
     const val material = "com.google.android.material:material:${Versions.design_material}"
     const val constraint_layout =
         "androidx.constraintlayout:constraintlayout:${Versions.design_constraint_layout}"
+    const val recycler_view = "androidx.recyclerview:recyclerview:${Versions.design_recycler_view}"
 }
 
 object Navigation {

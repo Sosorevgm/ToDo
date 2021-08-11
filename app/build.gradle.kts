@@ -55,6 +55,7 @@ dependencies {
     implementation(Design.appcompat)
     implementation(Design.material)
     implementation(Design.constraint_layout)
+    implementation(Design.recycler_view)
 
     implementation(Navigation.fragment_ktx)
     implementation(Navigation.ui_ktx)
