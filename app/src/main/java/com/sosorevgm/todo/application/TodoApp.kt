@@ -4,9 +4,6 @@ import androidx.work.Configuration
 import androidx.work.DelegatingWorkerFactory
 import com.sosorevgm.todo.di.components.DaggerAppComponent
 import com.sosorevgm.todo.domain.background.TasksWorkerFactory
-import com.sosorevgm.todo.domain.notifications.PushManager
-import com.sosorevgm.todo.features.main.SynchronizeTasksUseCase
-import com.sosorevgm.todo.features.tasks.TasksUseCase
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
 import timber.log.Timber
@@ -15,17 +12,10 @@ import javax.inject.Inject
 class TodoApp : DaggerApplication(), Configuration.Provider {
 
     @Inject
-    lateinit var tasksUseCase: TasksUseCase
-
-    @Inject
-    lateinit var synchronizeTasksUseCase: SynchronizeTasksUseCase
-
-    @Inject
-    lateinit var pushManager: PushManager
+    lateinit var workerFactory: TasksWorkerFactory
 
     override fun onCreate() {
         super.onCreate()
-
         Timber.plant(Timber.DebugTree())
     }
 
@@ -34,14 +24,8 @@ class TodoApp : DaggerApplication(), Configuration.Provider {
     }
 
     override fun getWorkManagerConfiguration(): Configuration {
-        val workerFactory = DelegatingWorkerFactory()
-        workerFactory.addFactory(
-            TasksWorkerFactory(
-                tasksUseCase,
-                synchronizeTasksUseCase,
-                pushManager
-            )
-        )
-        return Configuration.Builder().setWorkerFactory(workerFactory).build()
+        val factory = DelegatingWorkerFactory()
+        factory.addFactory(workerFactory)
+        return Configuration.Builder().setWorkerFactory(factory).build()
     }
 }

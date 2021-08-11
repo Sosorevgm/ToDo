@@ -22,7 +22,8 @@ import dagger.android.support.AndroidSupportInjectionModule
         RepositoriesModule::class,
         AccountModule::class,
         NotificationsModule::class,
-        WorkerManagerModule::class
+        WorkerManagerModule::class,
+        WorkerFactoryModule::class
     ]
 )
 interface AppComponent : AndroidInjector<TodoApp> {
