@@ -40,8 +40,8 @@ class TaskTouchHelper(
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         when (direction) {
-            ItemTouchHelper.START -> listener.taskDeleteSwipe(viewHolder.adapterPosition)
-            ItemTouchHelper.END -> listener.taskDoneSwipe(viewHolder.adapterPosition)
+            ItemTouchHelper.START -> listener.taskDeleteSwipe(viewHolder.bindingAdapterPosition)
+            ItemTouchHelper.END -> listener.taskDoneSwipe(viewHolder.bindingAdapterPosition)
         }
     }
 
