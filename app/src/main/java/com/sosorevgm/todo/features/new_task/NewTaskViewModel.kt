@@ -1,5 +1,6 @@
 package com.sosorevgm.todo.features.new_task
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,9 +18,10 @@ class NewTaskViewModel @Inject constructor(
     private val tasksUseCase: TasksUseCase
 ) : ViewModel() {
 
-    val dateLiveData: MutableLiveData<Long> by lazy {
+    private val _dateLiveData: MutableLiveData<Long> by lazy {
         MutableLiveData<Long>()
     }
+    val dateLiveData: LiveData<Long> = _dateLiveData
     val switchEvent = SingleLiveEvent<Boolean>()
     val navigationBack = SingleLiveEvent<Void>()
 
@@ -45,7 +47,7 @@ class NewTaskViewModel @Inject constructor(
     fun setDate(year: Int, month: Int, day: Int) {
         val timeStamp = getTimestamp(year, month, day)
         date = timeStamp
-        dateLiveData.value = timeStamp
+        _dateLiveData.value = timeStamp
     }
 
     fun switchClicked() {
@@ -53,7 +55,7 @@ class NewTaskViewModel @Inject constructor(
             switchEvent.value = true
         } else {
             date = 0L
-            dateLiveData.value = date
+            _dateLiveData.value = date
             switchEvent.value = false
         }
     }

@@ -1,5 +1,6 @@
 package com.sosorevgm.todo.features.tasks
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,15 +20,18 @@ class TasksViewModel @Inject constructor(
     private val tasksUseCase: TasksUseCase
 ) : ViewModel() {
 
-    val tasks = MutableLiveData<List<TaskViewData>>()
-    val completedTasks = MutableLiveData<Int>()
-    val tasksVisibility = MutableLiveData<Boolean>()
+    private val _tasks = MutableLiveData<List<TaskViewData>>()
+    private val _completedTasks = MutableLiveData<Int>()
+    private val _tasksVisibility = MutableLiveData<Boolean>()
+    val tasks: LiveData<List<TaskViewData>> = _tasks
+    val completedTasks: LiveData<Int> = _completedTasks
+    val tasksVisibility:LiveData<Boolean> = _tasksVisibility
     val navigation = SingleLiveEvent<Navigation.Event>()
 
     private val tasksList = mutableListOf<TaskModel>()
 
     init {
-        tasksVisibility.value = accountManager.tasksVisibility
+        _tasksVisibility.value = accountManager.tasksVisibility
         viewModelScope.launch {
             tasksUseCase.getTasksFromCache().collect {
                 tasksList.clear()
@@ -40,7 +44,7 @@ class TasksViewModel @Inject constructor(
     fun tasksVisibilityClick() {
         val currentVisibility = accountManager.tasksVisibility
         accountManager.tasksVisibility = !currentVisibility
-        tasksVisibility.value = !currentVisibility
+        _tasksVisibility.value = !currentVisibility
         updateUi()
     }
 
@@ -80,7 +84,7 @@ class TasksViewModel @Inject constructor(
             items.addAll(filteredTasks.sortedWith(TaskComparator()).toViewData())
         }
         items.add(TaskViewData.NewTask)
-        completedTasks.value = tasksList.filter { it.done }.size
-        tasks.value = items
+        _completedTasks.value = tasksList.filter { it.done }.size
+        _tasks.value = items
     }
 }
