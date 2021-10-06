@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sosorevgm.todo.R
 import com.sosorevgm.todo.databinding.FragmentTasksBinding
 import com.sosorevgm.todo.domain.navigation.Navigation
+import com.sosorevgm.todo.extensions.launchWhenStarted
 import com.sosorevgm.todo.features.tasks.recycler.TaskRVAdapter
 import com.sosorevgm.todo.features.tasks.recycler.TaskTouchHelper
 import com.sosorevgm.todo.features.tasks.recycler.TaskViewData
@@ -20,6 +21,7 @@ import com.sosorevgm.todo.features.tasks.recycler.toTaskModel
 import com.sosorevgm.todo.models.TASK_BUNDLE
 import com.sosorevgm.todo.models.TaskModel
 import dagger.android.support.DaggerFragment
+import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 class TasksFragment : DaggerFragment(), TaskRVAdapter.IListener, TaskTouchHelper.IListener,
@@ -65,39 +67,54 @@ class TasksFragment : DaggerFragment(), TaskRVAdapter.IListener, TaskTouchHelper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.tasksVisibility.observe(viewLifecycleOwner) { isVisible ->
-            if (isVisible) {
-                binding.appbar.ivTasksVisibility.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        requireContext(),
-                        R.drawable.icon_visibility
+        launchWhenStarted {
+            viewModel.tasksVisibility.collect { isVisible ->
+                if (isVisible) {
+                    binding.appbar.ivTasksVisibility.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            requireContext(),
+                            R.drawable.icon_visibility
+                        )
                     )
-                )
-            } else {
-                binding.appbar.ivTasksVisibility.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        requireContext(),
-                        R.drawable.icon_visibility_off
+                } else {
+                    binding.appbar.ivTasksVisibility.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            requireContext(),
+                            R.drawable.icon_visibility_off
+                        )
                     )
-                )
+                }
             }
         }
 
-        viewModel.completedTasks.observe(viewLifecycleOwner) {
-            binding.appbar.tvToolbarTasksDone.text =
-                requireContext().getString(R.string.tasks_done, it)
+        launchWhenStarted {
+            viewModel.completedTasks.collect { doneTasks ->
+                binding.appbar.tvToolbarTasksDone.text =
+                    requireContext().getString(R.string.tasks_done, doneTasks)
+            }
         }
 
-        viewModel.tasks.observe(viewLifecycleOwner) {
-            taskAdapter.submitList(it)
+        launchWhenStarted {
+            viewModel.completedTasks.collect { doneTasks ->
+                binding.appbar.tvToolbarTasksDone.text =
+                    requireContext().getString(R.string.tasks_done, doneTasks)
+            }
         }
 
-        viewModel.navigation.observe(viewLifecycleOwner) { event ->
-            when (event.screen) {
-                Navigation.Screen.NEW_TASK -> {
-                    val bundle = Bundle()
-                    if (event.task != null) bundle.putParcelable(TASK_BUNDLE, event.task)
-                    findNavController().navigate(R.id.new_task_screen, bundle)
+        launchWhenStarted {
+            viewModel.tasks.collect {
+                taskAdapter.submitList(it)
+            }
+        }
+
+        launchWhenStarted {
+            viewModel.navigation.collect { event ->
+                when (event.screen) {
+                    Navigation.Screen.NEW_TASK -> {
+                        val bundle = Bundle()
+                        if (event.task != null) bundle.putParcelable(TASK_BUNDLE, event.task)
+                        findNavController().navigate(R.id.new_task_screen, bundle)
+                    }
                 }
             }
         }

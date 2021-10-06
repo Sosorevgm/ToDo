@@ -1,17 +1,14 @@
 package com.sosorevgm.todo.features.tasks
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sosorevgm.todo.domain.account.AccountManager
 import com.sosorevgm.todo.domain.navigation.Navigation
-import com.sosorevgm.todo.domain.presentation.SingleLiveEvent
 import com.sosorevgm.todo.features.tasks.recycler.TaskViewData
 import com.sosorevgm.todo.models.TaskComparator
 import com.sosorevgm.todo.models.TaskModel
 import com.sosorevgm.todo.models.toViewData
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,22 +17,22 @@ class TasksViewModel @Inject constructor(
     private val tasksUseCase: TasksUseCase
 ) : ViewModel() {
 
-    private val _tasks = MutableLiveData<List<TaskViewData>>()
-    private val _completedTasks = MutableLiveData<Int>()
-    private val _tasksVisibility = MutableLiveData<Boolean>()
-    val tasks: LiveData<List<TaskViewData>> = _tasks
-    val completedTasks: LiveData<Int> = _completedTasks
-    val tasksVisibility:LiveData<Boolean> = _tasksVisibility
-    val navigation = SingleLiveEvent<Navigation.Event>()
-
-    private val tasksList = mutableListOf<TaskModel>()
+    private val _tasksList = mutableListOf<TaskModel>()
+    private val _tasks = MutableStateFlow(emptyList<TaskViewData>())
+    private val _completedTasks = MutableStateFlow(0)
+    private val _tasksVisibility = MutableStateFlow(false)
+    private val _navigation = MutableSharedFlow<Navigation.Event>()
+    val tasks: StateFlow<List<TaskViewData>> = _tasks.asStateFlow()
+    val completedTasks: StateFlow<Int> = _completedTasks.asStateFlow()
+    val tasksVisibility: StateFlow<Boolean> = _tasksVisibility.asStateFlow()
+    val navigation: SharedFlow<Navigation.Event> = _navigation.asSharedFlow()
 
     init {
         _tasksVisibility.value = accountManager.tasksVisibility
         viewModelScope.launch {
             tasksUseCase.getTasksFromCache().collect {
-                tasksList.clear()
-                tasksList.addAll(it)
+                _tasksList.clear()
+                _tasksList.addAll(it)
                 updateUi()
             }
         }
@@ -67,24 +64,28 @@ class TasksViewModel @Inject constructor(
     }
 
     fun onTaskClick(task: TaskModel) {
-        navigation.value = Navigation.getEvent(Navigation.Screen.NEW_TASK, task)
+        viewModelScope.launch {
+            _navigation.emit(Navigation.getEvent(Navigation.Screen.NEW_TASK, task))
+        }
     }
 
     fun onNewTaskClick() {
-        navigation.value = Navigation.getEvent(Navigation.Screen.NEW_TASK, null)
+        viewModelScope.launch {
+            _navigation.emit(Navigation.getEvent(Navigation.Screen.NEW_TASK, null))
+        }
     }
 
     private fun updateUi() {
         val items = mutableListOf<TaskViewData>()
         items.add(TaskViewData.Header)
         if (accountManager.tasksVisibility) {
-            items.addAll(tasksList.sortedWith(TaskComparator()).toViewData())
+            items.addAll(_tasksList.sortedWith(TaskComparator()).toViewData())
         } else {
-            val filteredTasks = tasksList.filter { !it.done } as MutableList<TaskModel>
+            val filteredTasks = _tasksList.filter { !it.done } as MutableList<TaskModel>
             items.addAll(filteredTasks.sortedWith(TaskComparator()).toViewData())
         }
         items.add(TaskViewData.NewTask)
-        _completedTasks.value = tasksList.filter { it.done }.size
+        _completedTasks.value = _tasksList.filter { it.done }.size
         _tasks.value = items
     }
 }

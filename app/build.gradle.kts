@@ -98,6 +98,7 @@ dependencies {
     testImplementation(Tests.mockito_core)
     testImplementation(Tests.mockito_kotlin)
     testImplementation(Tests.coroutines_test)
+    testImplementation(Tests.flow_turbine_test)
     androidTestImplementation(Tests.junit_ext)
     androidTestImplementation(Tests.espresso_core)
     androidTestImplementation(Tests.mockito_android)
