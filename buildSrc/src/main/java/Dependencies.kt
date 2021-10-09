@@ -48,6 +48,7 @@ object Versions {
     const val mockito_core = "3.9.0"
     const val mockito_kotlin = "3.2.0"
     const val coroutines_test = "1.5.1"
+    const val flow_turbine_test = "0.6.1"
     const val espresso_core = "3.4.0"
     const val androidx_test_core = "1.4.0"
     const val mockito_android = "2.28.2"
@@ -156,6 +157,7 @@ object Tests {
     const val mockito_kotlin = "org.mockito.kotlin:mockito-kotlin:${Versions.mockito_kotlin}"
     const val coroutines_test =
         "org.jetbrains.kotlinx:kotlinx-coroutines-test:${Versions.coroutines_test}"
+    const val flow_turbine_test = "app.cash.turbine:turbine:${Versions.flow_turbine_test}"
     const val androidx_test_core = "androidx.test:core-ktx:${Versions.androidx_test_core}"
     const val mockito_android = "org.mockito:mockito-android:${Versions.mockito_android}"
     const val espresso_core = "androidx.test.espresso:espresso-core:${Versions.espresso_core}"

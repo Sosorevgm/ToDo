@@ -17,10 +17,12 @@ import androidx.navigation.fragment.findNavController
 import com.sosorevgm.todo.R
 import com.sosorevgm.todo.databinding.FragmentNewTaskBinding
 import com.sosorevgm.todo.extensions.getTaskDate
+import com.sosorevgm.todo.extensions.launchWhenStarted
 import com.sosorevgm.todo.models.TASK_BUNDLE
 import com.sosorevgm.todo.models.TaskModel
 import com.sosorevgm.todo.models.TaskPriority
 import dagger.android.support.DaggerFragment
+import kotlinx.coroutines.flow.collect
 import java.util.*
 import javax.inject.Inject
 
@@ -69,24 +71,30 @@ class NewTaskFragment : DaggerFragment(), AdapterView.OnItemSelectedListener, Vi
 
         if (viewModel.oldTask == null) setDescriptionFocus()
 
-        viewModel.switchEvent.observe(viewLifecycleOwner) { needToSetDate ->
-            if (needToSetDate) {
-                showDatePickerDialog()
-            } else {
-                binding.taskTimingSwitch.isChecked = false
+        launchWhenStarted {
+            viewModel.switchEvent.collect { needToSetDate ->
+                if (needToSetDate) {
+                    showDatePickerDialog()
+                } else {
+                    binding.taskTimingSwitch.isChecked = false
+                }
             }
         }
 
-        viewModel.dateLiveData.observe(viewLifecycleOwner) {
-            if (it == 0L) {
-                binding.tvNewTaskDate.text = ""
-            } else {
-                binding.tvNewTaskDate.text = getTaskDate(it)
+        launchWhenStarted {
+            viewModel.dateFlow.collect { date ->
+                if (date == 0L) {
+                    binding.tvNewTaskDate.text = ""
+                } else {
+                    binding.tvNewTaskDate.text = getTaskDate(date)
+                }
             }
         }
 
-        viewModel.navigationBack.observe(viewLifecycleOwner) {
-            findNavController().navigateUp()
+        launchWhenStarted {
+            viewModel.navigationBack.collect {
+                findNavController().navigateUp()
+            }
         }
     }
 

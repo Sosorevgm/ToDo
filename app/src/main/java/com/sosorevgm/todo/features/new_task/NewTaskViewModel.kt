@@ -1,15 +1,14 @@
 package com.sosorevgm.todo.features.new_task
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sosorevgm.todo.domain.presentation.SingleLiveEvent
+import com.sosorevgm.todo.extensions.call
 import com.sosorevgm.todo.extensions.getCurrentTimestamp
 import com.sosorevgm.todo.extensions.getTimestamp
 import com.sosorevgm.todo.features.tasks.TasksUseCase
 import com.sosorevgm.todo.models.TaskModel
 import com.sosorevgm.todo.models.TaskPriority
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -18,12 +17,12 @@ class NewTaskViewModel @Inject constructor(
     private val tasksUseCase: TasksUseCase
 ) : ViewModel() {
 
-    private val _dateLiveData: MutableLiveData<Long> by lazy {
-        MutableLiveData<Long>()
-    }
-    val dateLiveData: LiveData<Long> = _dateLiveData
-    val switchEvent = SingleLiveEvent<Boolean>()
-    val navigationBack = SingleLiveEvent<Void>()
+    private val _dateFlow = MutableStateFlow(0L)
+    private val _switchEvent = MutableSharedFlow<Boolean>()
+    private val _navigationBack = MutableSharedFlow<Unit>()
+    val dateFlow: StateFlow<Long> = _dateFlow.asStateFlow()
+    val switchEvent: SharedFlow<Boolean> = _switchEvent.asSharedFlow()
+    val navigationBack: SharedFlow<Unit> = _navigationBack.asSharedFlow()
 
     var oldTask: TaskModel? = null
     private var priority = TaskPriority.DEFAULT
@@ -36,7 +35,7 @@ class NewTaskViewModel @Inject constructor(
             } else {
                 tasksUseCase.updateTask(getUpdatedTask(description))
             }
-            navigationBack.call()
+            _navigationBack.call()
         }
     }
 
@@ -47,16 +46,18 @@ class NewTaskViewModel @Inject constructor(
     fun setDate(year: Int, month: Int, day: Int) {
         val timeStamp = getTimestamp(year, month, day)
         date = timeStamp
-        _dateLiveData.value = timeStamp
+        _dateFlow.value = timeStamp
     }
 
     fun switchClicked() {
-        if (date == 0L) {
-            switchEvent.value = true
-        } else {
-            date = 0L
-            _dateLiveData.value = date
-            switchEvent.value = false
+        viewModelScope.launch {
+            if (date == 0L) {
+                _switchEvent.emit(true)
+            } else {
+                date = 0L
+                _dateFlow.value = date
+                _switchEvent.emit(false)
+            }
         }
     }
 
@@ -69,7 +70,7 @@ class NewTaskViewModel @Inject constructor(
             oldTask?.let {
                 tasksUseCase.deleteTask(it)
             }
-            navigationBack.call()
+            _navigationBack.call()
         }
     }
 
