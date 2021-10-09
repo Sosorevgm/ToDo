@@ -5,6 +5,7 @@
 - kotlin
 - dagger 2
 - coroutines
+- state/shared flow
 - retrofit
 - room
 - androidx navigation
