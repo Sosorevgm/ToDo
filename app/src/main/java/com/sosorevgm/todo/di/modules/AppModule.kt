@@ -1,6 +1,5 @@
 package com.sosorevgm.todo.di.modules
 
-import android.app.Application
 import android.content.Context
 import com.sosorevgm.todo.di.scopes.AppScope
 import com.sosorevgm.todo.domain.api.TasksApi
@@ -18,10 +17,6 @@ import dagger.Provides
 
 @Module
 class AppModule {
-
-    @AppScope
-    @Provides
-    fun providesContext(application: Application): Context = application.applicationContext
 
     @AppScope
     @Provides

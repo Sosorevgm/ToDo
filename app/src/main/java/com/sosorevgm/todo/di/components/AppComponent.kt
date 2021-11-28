@@ -1,12 +1,14 @@
 package com.sosorevgm.todo.di.components
 
-import android.app.Application
+import android.content.Context
 import com.sosorevgm.todo.application.TodoApp
 import com.sosorevgm.todo.di.modules.*
 import com.sosorevgm.todo.di.scopes.AppScope
+import com.sosorevgm.todo.features.main.MainActivity
+import com.sosorevgm.todo.features.new_task.NewTaskFragment
+import com.sosorevgm.todo.features.tasks.TasksFragment
 import dagger.BindsInstance
 import dagger.Component
-import dagger.android.AndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
 
 @AppScope
@@ -26,10 +28,15 @@ import dagger.android.support.AndroidSupportInjectionModule
         WorkerFactoryModule::class
     ]
 )
-interface AppComponent : AndroidInjector<TodoApp> {
+interface AppComponent {
 
     @Component.Factory
     interface Factory {
-        fun create(@BindsInstance application: Application): AppComponent
+        fun create(@BindsInstance context: Context): AppComponent
     }
+
+    fun inject(app: TodoApp)
+    fun inject(mainActivity: MainActivity)
+    fun inject(taskFragment: TasksFragment)
+    fun inject(newTaskFragment: NewTaskFragment)
 }

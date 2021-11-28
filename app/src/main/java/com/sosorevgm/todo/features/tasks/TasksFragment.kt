@@ -5,12 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sosorevgm.todo.R
+import com.sosorevgm.todo.application.TodoApp
 import com.sosorevgm.todo.databinding.FragmentTasksBinding
 import com.sosorevgm.todo.domain.navigation.Navigation
 import com.sosorevgm.todo.extensions.launchWhenStarted
@@ -20,11 +22,10 @@ import com.sosorevgm.todo.features.tasks.recycler.TaskViewData
 import com.sosorevgm.todo.features.tasks.recycler.toTaskModel
 import com.sosorevgm.todo.models.TASK_BUNDLE
 import com.sosorevgm.todo.models.TaskModel
-import dagger.android.support.DaggerFragment
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
-class TasksFragment : DaggerFragment(), TaskRVAdapter.IListener, TaskTouchHelper.IListener,
+class TasksFragment : Fragment(), TaskRVAdapter.IListener, TaskTouchHelper.IListener,
     View.OnClickListener {
 
     private var _binding: FragmentTasksBinding? = null
@@ -38,6 +39,11 @@ class TasksFragment : DaggerFragment(), TaskRVAdapter.IListener, TaskTouchHelper
     private val viewModel by lazy(mode = LazyThreadSafetyMode.NONE) {
         ViewModelProvider(requireActivity(), viewModelFactory)
             .get(TasksViewModel::class.java)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        (requireActivity().application as TodoApp).appComponent.inject(this)
     }
 
     override fun onCreateView(
@@ -68,55 +74,19 @@ class TasksFragment : DaggerFragment(), TaskRVAdapter.IListener, TaskTouchHelper
         super.onViewCreated(view, savedInstanceState)
 
         launchWhenStarted {
-            viewModel.tasksVisibility.collect { isVisible ->
-                if (isVisible) {
-                    binding.appbar.ivTasksVisibility.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            requireContext(),
-                            R.drawable.icon_visibility
-                        )
-                    )
-                } else {
-                    binding.appbar.ivTasksVisibility.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            requireContext(),
-                            R.drawable.icon_visibility_off
-                        )
-                    )
-                }
-            }
+            viewModel.tasksVisibility.collect(::handleTasksVisibility)
         }
 
         launchWhenStarted {
-            viewModel.completedTasks.collect { doneTasks ->
-                binding.appbar.tvToolbarTasksDone.text =
-                    requireContext().getString(R.string.tasks_done, doneTasks)
-            }
+            viewModel.completedTasks.collect(::handleCompletedTasks)
         }
 
         launchWhenStarted {
-            viewModel.completedTasks.collect { doneTasks ->
-                binding.appbar.tvToolbarTasksDone.text =
-                    requireContext().getString(R.string.tasks_done, doneTasks)
-            }
+            viewModel.tasks.collect(::handleTasks)
         }
 
         launchWhenStarted {
-            viewModel.tasks.collect {
-                taskAdapter.submitList(it)
-            }
-        }
-
-        launchWhenStarted {
-            viewModel.navigation.collect { event ->
-                when (event.screen) {
-                    Navigation.Screen.NEW_TASK -> {
-                        val bundle = Bundle()
-                        if (event.task != null) bundle.putParcelable(TASK_BUNDLE, event.task)
-                        findNavController().navigate(R.id.new_task_screen, bundle)
-                    }
-                }
-            }
+            viewModel.navigation.collect(::handleNavigationEvent)
         }
     }
 
@@ -160,5 +130,42 @@ class TasksFragment : DaggerFragment(), TaskRVAdapter.IListener, TaskTouchHelper
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    private fun handleTasksVisibility(isVisible: Boolean) {
+        if (isVisible) {
+            binding.appbar.ivTasksVisibility.setImageDrawable(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.icon_visibility
+                )
+            )
+        } else {
+            binding.appbar.ivTasksVisibility.setImageDrawable(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.icon_visibility_off
+                )
+            )
+        }
+    }
+
+    private fun handleCompletedTasks(doneTasks: Int) {
+        binding.appbar.tvToolbarTasksDone.text =
+            requireContext().getString(R.string.tasks_done, doneTasks)
+    }
+
+    private fun handleTasks(tasks: List<TaskViewData>) {
+        taskAdapter.submitList(tasks)
+    }
+
+    private fun handleNavigationEvent(event: Navigation.Event) {
+        when (event.screen) {
+            Navigation.Screen.NEW_TASK -> {
+                val bundle = Bundle()
+                if (event.task != null) bundle.putParcelable(TASK_BUNDLE, event.task)
+                findNavController().navigate(R.id.new_task_screen, bundle)
+            }
+        }
     }
 }

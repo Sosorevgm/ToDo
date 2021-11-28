@@ -1,26 +1,26 @@
 package com.sosorevgm.todo.application
 
+import android.app.Application
 import androidx.work.Configuration
 import androidx.work.DelegatingWorkerFactory
+import com.sosorevgm.todo.di.components.AppComponent
 import com.sosorevgm.todo.di.components.DaggerAppComponent
 import com.sosorevgm.todo.domain.background.TasksWorkerFactory
-import dagger.android.AndroidInjector
-import dagger.android.DaggerApplication
 import timber.log.Timber
 import javax.inject.Inject
 
-class TodoApp : DaggerApplication(), Configuration.Provider {
+class TodoApp : Application(), Configuration.Provider {
+
+    lateinit var appComponent: AppComponent
 
     @Inject
     lateinit var workerFactory: TasksWorkerFactory
 
     override fun onCreate() {
         super.onCreate()
+        appComponent = DaggerAppComponent.factory().create(this)
+        appComponent.inject(this)
         Timber.plant(Timber.DebugTree())
-    }
-
-    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        return DaggerAppComponent.factory().create(this)
     }
 
     override fun getWorkManagerConfiguration(): Configuration {
