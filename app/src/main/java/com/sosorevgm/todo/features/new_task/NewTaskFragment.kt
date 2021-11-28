@@ -12,21 +12,22 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.sosorevgm.todo.R
+import com.sosorevgm.todo.application.TodoApp
 import com.sosorevgm.todo.databinding.FragmentNewTaskBinding
 import com.sosorevgm.todo.extensions.getTaskDate
 import com.sosorevgm.todo.extensions.launchWhenStarted
 import com.sosorevgm.todo.models.TASK_BUNDLE
 import com.sosorevgm.todo.models.TaskModel
 import com.sosorevgm.todo.models.TaskPriority
-import dagger.android.support.DaggerFragment
 import kotlinx.coroutines.flow.collect
 import java.util.*
 import javax.inject.Inject
 
-class NewTaskFragment : DaggerFragment(), AdapterView.OnItemSelectedListener, View.OnClickListener {
+class NewTaskFragment : Fragment(), AdapterView.OnItemSelectedListener, View.OnClickListener {
 
     private var _binding: FragmentNewTaskBinding? = null
     private val binding get() = _binding!!
@@ -37,6 +38,11 @@ class NewTaskFragment : DaggerFragment(), AdapterView.OnItemSelectedListener, Vi
     private val viewModel by lazy(mode = LazyThreadSafetyMode.NONE) {
         ViewModelProvider(this, viewModelFactory)
             .get(NewTaskViewModel::class.java)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        (requireActivity().application as TodoApp).appComponent.inject(this)
     }
 
     override fun onCreateView(
@@ -72,23 +78,11 @@ class NewTaskFragment : DaggerFragment(), AdapterView.OnItemSelectedListener, Vi
         if (viewModel.oldTask == null) setDescriptionFocus()
 
         launchWhenStarted {
-            viewModel.switchEvent.collect { needToSetDate ->
-                if (needToSetDate) {
-                    showDatePickerDialog()
-                } else {
-                    binding.taskTimingSwitch.isChecked = false
-                }
-            }
+            viewModel.switchEvent.collect(::handleSwitchEvent)
         }
 
         launchWhenStarted {
-            viewModel.dateFlow.collect { date ->
-                if (date == 0L) {
-                    binding.tvNewTaskDate.text = ""
-                } else {
-                    binding.tvNewTaskDate.text = getTaskDate(date)
-                }
-            }
+            viewModel.dateFlow.collect(::handleDate)
         }
 
         launchWhenStarted {
@@ -136,7 +130,7 @@ class NewTaskFragment : DaggerFragment(), AdapterView.OnItemSelectedListener, Vi
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
-
+        // do nothing
     }
 
     override fun onClick(v: View?) {
@@ -152,6 +146,22 @@ class NewTaskFragment : DaggerFragment(), AdapterView.OnItemSelectedListener, Vi
             R.id.task_timing_switch -> {
                 viewModel.switchClicked()
             }
+        }
+    }
+
+    private fun handleSwitchEvent(needToSetDate: Boolean) {
+        if (needToSetDate) {
+            showDatePickerDialog()
+        } else {
+            binding.taskTimingSwitch.isChecked = false
+        }
+    }
+
+    private fun handleDate(date: Long) {
+        if (date == 0L) {
+            binding.tvNewTaskDate.text = ""
+        } else {
+            binding.tvNewTaskDate.text = getTaskDate(date)
         }
     }
 
