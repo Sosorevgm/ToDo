@@ -5,16 +5,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.sosorevgm.todo.R
 import com.sosorevgm.todo.application.TodoApp
-import com.sosorevgm.todo.domain.background.WorkerManager
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    @Inject
-    lateinit var workerManager: WorkerManager
 
     private val viewModel by lazy(mode = LazyThreadSafetyMode.NONE) {
         ViewModelProvider(this, viewModelFactory)
@@ -26,8 +22,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         (application as TodoApp).appComponent.inject(this)
+        viewModel.navigate()
+        viewModel.startWorkers()
         viewModel.startSynchronizingTasks()
-        workerManager.startWorkers()
     }
 
     override fun onResume() {

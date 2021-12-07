@@ -8,6 +8,20 @@
     >
 
     <fragment
+        android:id="@+id/authorization_screen"
+        android:name="com.sosorevgm.todo.features.authorize.AuthorizeFragment"
+        android:label="fragment_authorization"
+        tools:layout="@layout/fragment_authorize"
+        />
+
+    <fragment
+        android:id="@+id/registration_screen"
+        android:name="com.sosorevgm.todo.features.registration.RegistrationFragment"
+        android:label="fragment_registration"
+        tools:layout="@layout/fragment_registration"
+        />
+
+    <fragment
         android:id="@+id/tasks_screen"
         android:name="com.sosorevgm.todo.features.tasks.TasksFragment"
         android:label="fragment_tasks"

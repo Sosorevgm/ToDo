@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Button" parent="Widget.AppCompat.Button">
+        <item name="android:background">@color/white</item>
+        <item name="textStartPadding">8dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:minWidth">164dp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/blue</item>
+    </style>
+</resources>

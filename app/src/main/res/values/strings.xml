@@ -3,6 +3,10 @@
     <string name="app_name">ToDo</string>
     <string name="not">Нет</string>
 
+    <!-- Authorization -->
+    <string name="authorize">Войти</string>
+    <string name="registration">Регистрация</string>
+
     <!-- Tasks -->
     <string name="my_tasks">Мои дела</string>
     <string name="tasks_done">Выполнено — %1$d</string>

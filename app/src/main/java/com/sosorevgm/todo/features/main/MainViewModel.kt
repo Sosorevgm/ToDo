@@ -2,16 +2,19 @@ package com.sosorevgm.todo.features.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sosorevgm.todo.domain.account.AccountManager
+import com.sosorevgm.todo.domain.background.WorkerManager
 import com.sosorevgm.todo.domain.cache.TaskSynchronizeEntity
 import com.sosorevgm.todo.domain.cache.toTaskApiModels
 import com.sosorevgm.todo.models.TaskSynchronizeAction
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
+    private val accountManager: AccountManager,
+    private val workerManager: WorkerManager,
     private val synchronizeTasksUseCase: SynchronizeTasksUseCase
 ) : ViewModel() {
 
@@ -24,6 +27,15 @@ class MainViewModel @Inject constructor(
     private var state = WorkState.FIRST_LAUNCH
     private var synchronizeJob: Job? = null
     private var tasksUpdateJob: Job? = null
+
+    fun navigate() {
+        if (state == WorkState.IN_PROGRESS) return
+    }
+
+    fun startWorkers() {
+        if (state == WorkState.IN_PROGRESS) return
+        workerManager.startWorkers()
+    }
 
     // start new flow at first MainActivity creation
     // sendSingleTask to realtime update of single task

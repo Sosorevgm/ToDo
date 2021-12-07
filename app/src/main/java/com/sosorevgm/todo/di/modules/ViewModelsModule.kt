@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.sosorevgm.todo.di.factory.ViewModelKey
 import com.sosorevgm.todo.di.factory.ViewModelProviderFactory
+import com.sosorevgm.todo.features.authorize.AuthorizeViewModel
 import com.sosorevgm.todo.features.main.MainViewModel
 import com.sosorevgm.todo.features.new_task.NewTaskViewModel
+import com.sosorevgm.todo.features.registration.RegistrationViewModel
 import com.sosorevgm.todo.features.tasks.TasksViewModel
 import dagger.Binds
 import dagger.Module
@@ -24,6 +26,20 @@ abstract class ViewModelsModule {
     @ViewModelKey(MainViewModel::class)
     abstract fun providesMainViewModel(
         viewModel: MainViewModel
+    ): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AuthorizeViewModel::class)
+    abstract fun providesAuthorizationViewModel(
+        viewModel: AuthorizeViewModel
+    ): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(RegistrationViewModel::class)
+    abstract fun providesRegistrationViewModel(
+        viewModel: RegistrationViewModel
     ): ViewModel
 
     @Binds

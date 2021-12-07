@@ -71,7 +71,7 @@ class TasksViewModel @Inject constructor(
 
     fun onNewTaskClick() {
         viewModelScope.launch {
-            _navigation.emit(Navigation.getEvent(Navigation.Screen.NEW_TASK, null))
+            _navigation.emit(Navigation.getEvent(Navigation.Screen.NEW_TASK))
         }
     }
 

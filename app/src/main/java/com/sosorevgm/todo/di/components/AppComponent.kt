@@ -4,8 +4,10 @@ import android.content.Context
 import com.sosorevgm.todo.application.TodoApp
 import com.sosorevgm.todo.di.modules.*
 import com.sosorevgm.todo.di.scopes.AppScope
+import com.sosorevgm.todo.features.authorize.AuthorizeFragment
 import com.sosorevgm.todo.features.main.MainActivity
 import com.sosorevgm.todo.features.new_task.NewTaskFragment
+import com.sosorevgm.todo.features.registration.RegistrationFragment
 import com.sosorevgm.todo.features.tasks.TasksFragment
 import dagger.BindsInstance
 import dagger.Component
@@ -36,6 +38,8 @@ interface AppComponent {
     }
 
     fun inject(app: TodoApp)
+    fun inject(authorizationFragment: AuthorizeFragment)
+    fun inject(registrationFragment: RegistrationFragment)
     fun inject(mainActivity: MainActivity)
     fun inject(taskFragment: TasksFragment)
     fun inject(newTaskFragment: NewTaskFragment)
