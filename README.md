@@ -1,6 +1,6 @@
-Приложение для создания и планирования задач. Данный проект был написан в процессе обучения в школе мобильной разработки Яндекса.
+Mobile application for creating and scheduling tasks. This project was created during the course of training at the Yandex mobile school.
 
-Стек технологий:
+Technology stack:
 - MVVM
 - kotlin
 - dagger 2
